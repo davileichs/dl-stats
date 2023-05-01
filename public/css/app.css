@@ -1,0 +1,17 @@
+html {
+    height: -webkit-fill-available; /* We have to fix html height */
+}
+
+body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+
+table {
+    background-color: white;
+}
+
+.min-heigth-container {
+    min-height: calc(100vh - (143px + 56px));
+}
