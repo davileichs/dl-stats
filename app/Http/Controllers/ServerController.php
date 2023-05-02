@@ -38,8 +38,6 @@ class ServerController extends Controller
      */
     public function show(Server $server)
     {
-        session()->put('current.server', $server);
-
         return view('pages.servers.show', compact('server'));
     }
 

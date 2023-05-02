@@ -24,8 +24,12 @@
                                     </ul>
                                 </div>
                                 <p class="mt-0"><img src="/images/flags/{{ strtolower($player->flag) }}.gif"> {{ $player->country }}</p>
-                                <p class="mt-4"><a class="btn btn-dark btn-sm" href="http://steamcommunity.com/profiles/{{ $player->steam }}" role="button" target="_blank">Steam profile</a></p>
-                                <p class="text-success">Last Access: {{ timeago2string($player->last_event, 4) }}</p>
+                                <p class="mt-4"><a class="btn btn-light btn-sm" href="http://steamcommunity.com/profiles/{{ $player->steam }}" role="button" target="_blank">Steam profile</a></p>
+                                @if ($player->is_online)
+                                    <p class="text-success h6">Online</p>
+                                @else
+                                    <p class="text-danger">Last Access: {{ timeago2string($player->last_event, 4) }}</p>
+                                @endif
                             </div>
                         </div>
                     </div>

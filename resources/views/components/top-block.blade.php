@@ -14,7 +14,7 @@
         @foreach($topPlayers as $k=>$player)
             <tr>
                 <td>{{ $k+1 }}</td>
-                <td>{{ $player->lastName }}</td>
+                <td><a href="{{ route('player.show', $player->playerId) }}" class="link-dark text-decoration-none">{{ $player->lastName }}</a></td>
                 <td>{{ $player->points }}</td>
                 </tr>
             </tr>

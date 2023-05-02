@@ -19,11 +19,10 @@
             </nav>
             <div class="tab-content pt-4" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
-                    <livewire:server.info :server="$server"  />
-                    <livewire:server.table-players />
+                    <livewire:server.info :server="$server" />
+                    <livewire:server.table-players :server="$server" />
                 </div>
                 <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
-
                     @include('pages.servers.top-tab')
                 </div>
             </div>

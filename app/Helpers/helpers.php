@@ -54,19 +54,27 @@ if (! function_exists('getSteamProfileId')) {
 
 if (! function_exists('getSteamAvatar')) {
     function getSteamAvatar(string $steamId): string
-       {
+    {
         $steamUrl = "http://steamcommunity.com/profiles/".$steamId;
-
         $page = Http::get($steamUrl);
         $html = $page->body();
-
         preg_match('/\<link rel=\"image_src\" href=\"(.*)\"\>/', $html, $match);
-
+        $avatar = '/images/unknown.jpg';
         if(!empty($match[1])) {
-            return $match[1];
-       } else {
-            return '/images/unknown.jpg';
-       }
+            $avatar = $match[1];
+        }
+        if(str_contains($avatar, 'steam_logo')) {
+            preg_match_all('/\< *[img][^\>]*[src] *= *[\"]([^\"\ >]*)/', $html, $match);
+            if (isset($match[1])) {
+                foreach($match[1] as $img) {
+                    if(str_contains($img, 'full')) {
+                        $avatar = $img;
+                    }
+                }
+            }
+
+        }
+        return $avatar;
     }
 }
 

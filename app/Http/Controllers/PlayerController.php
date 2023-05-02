@@ -13,8 +13,8 @@ class PlayerController extends Controller
      */
     public function index(String $game)
     {
-
-        return view('pages.players.index');
+        $server = Game::where('code', $game)->first()->servers()->first();
+        return view('pages.players.index', compact('server'));
 
     }
 
@@ -40,8 +40,9 @@ class PlayerController extends Controller
     public function show(int $playerId)
     {
         $player = Player::where('playerId', $playerId)->first();
+        $server = $player->servers()->first();
 
-        return view('pages.players.show', compact('player'));
+        return view('pages.players.show', compact('player', 'server'));
     }
 
     /**

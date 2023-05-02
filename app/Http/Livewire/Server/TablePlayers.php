@@ -10,12 +10,12 @@ use Livewire\Component;
 class TablePlayers extends Component
 {
 
-
+    public $server;
 
     public function render()
     {
         return view('livewire.server.table-players', [
-            'teams'   =>  session()->get('current.server')->getLivestats(),
+            'teams'   =>  $this->server->getLivestats(),
         ]);
 
     }

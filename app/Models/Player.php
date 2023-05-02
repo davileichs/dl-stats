@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\hasOne;
 use Illuminate\Database\Eloquent\Relations\belongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Collection;
 
 
@@ -64,6 +65,11 @@ class Player extends Model
     public function games(): belongsTo
     {
         return $this->belongsTo(Game::class, 'game', 'code');
+    }
+
+    public function servers(): belongsTo
+    {
+        return $this->belongsTo(Server::class, 'game', 'game');
     }
 
     public function mapConnects(): hasMany
@@ -256,5 +262,10 @@ class Player extends Model
         $merged = $con_Collection->merge($dis_Collection)->sortBy('ipAddress')->sortBy('eventTime', SORT_REGULAR, true);
 
         return $merged;
+    }
+
+    public function getIsOnlineAttribute(): bool
+    {
+        return $this->livestats()->exists();
     }
 }
