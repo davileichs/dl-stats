@@ -18,8 +18,9 @@
             </tbody>
         </table>
     </div>
+    @isset($pagination)
     <div class="row text-right">
         {{ $pagination }}
     </div>
-
+    @endisset
 </div>

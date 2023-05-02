@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\hasOne;
+use Illuminate\Support\Collection;
 use Ramsey\Uuid\Type\Decimal;
 
 class Server extends Model
@@ -95,6 +96,34 @@ class Server extends Model
         ->groupBy(['Players.playerId'])
         ->orderBy('points', 'desc')
         ->limit(10);
+    }
+
+
+    public function getLivestats()
+    {
+        $livestats = $this->livestats()->orderBy('skill_change', 'desc')->get();
+
+        $teams = new Collection(['humans' => new Collection(), 'zombies' => new Collection(), 'spectator' => new Collection()]);
+        foreach($livestats as $row) {
+            switch($row->team) {
+                case 'CT':
+                case 'TERRORIST':
+                    $teams['humans']->push($row);
+                    break;
+                case 'Spectator':
+                    $teams['spectator']->push($row);
+                    break;
+                default:
+                    $teams['zombies']->push($row);
+                    break;
+            }
+        }
+
+        $teams->map(function ($team) {
+            return $team->sortByDesc('skill_change');
+        });
+
+        return $teams;
     }
 
 

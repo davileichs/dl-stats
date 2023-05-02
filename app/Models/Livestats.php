@@ -11,7 +11,7 @@ class Livestats extends Model
 
     protected $table = "Livestats";
 
-    protected $primaryKey = 'playerId';
+    protected $primaryKey = 'player_id';
 
 
     public function __construct()

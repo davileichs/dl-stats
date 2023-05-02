@@ -13,7 +13,7 @@
       <div class="col-md-2">
         <x-block-clip>
             <x-slot:value>
-                {{ $server->act_players }}/{{ $server->max_players }}
+                {{ $server->act_players -1 }}/{{ $server->max_players -1  }}
             </x-slot>
             <x-slot:title>
                 Players

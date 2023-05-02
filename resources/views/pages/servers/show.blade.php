@@ -10,7 +10,7 @@
 
     </x-slot>
     <x-slot:body>
-        <div class="container text-center -bs-info-border-subtle mt-5 ">
+        <div class="container text-center -bs-info-border-subtle mt-5 pb-4 ">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link link-light active" id="nav-status-tab" data-bs-toggle="tab" data-bs-target="#nav-status" type="button" role="tab" aria-controls="nav-status" aria-selected="true">Status</button>
@@ -20,7 +20,7 @@
             <div class="tab-content pt-4" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
                     <livewire:server.info :server="$server"  />
-                    <livewire:server.table-players :server="$server" />
+                    <livewire:server.table-players />
                 </div>
                 <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
 
