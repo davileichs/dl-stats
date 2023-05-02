@@ -15,7 +15,7 @@
                 <tbody>
                         @foreach ($players as $player)
                         <tr class="table-{{ $class }}">
-                            <td>{{ $player->name }}</td>
+                            <td><a href="{{ route('player.show', $player->player_id) }}" class="link-dark text-decoration-none">{{ $player->name }}</a></td>
                             <td>{{ $player->skill_change }}</td>
                             <td>{{ $player->kills }} | {{ $player->deaths }}</td>
                             <td class="small">{{ $player->time }}</td>
