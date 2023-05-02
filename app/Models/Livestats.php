@@ -11,6 +11,8 @@ class Livestats extends Model
 
     protected $table = "Livestats";
 
+    protected $primaryKey = 'playerId';
+
 
     public function __construct()
     {
@@ -26,6 +28,6 @@ class Livestats extends Model
         $seconds_diff = $ts2 - $ts1;
         $minutes = ($seconds_diff/60);
 
-        return intdiv($minutes, 60) . ':'. str_pad(($minutes % 60), 2, '0', STR_PAD_LEFT);
+        return time2string($seconds_diff, ['h', 'm', 's']);
     }
 }

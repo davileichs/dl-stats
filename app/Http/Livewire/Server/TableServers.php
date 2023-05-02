@@ -14,7 +14,7 @@ class TableServers extends Component
     public function render()
     {
         return view('livewire.server.table-servers', [
-            'servers'   => Server::select(['serverId', 'name', 'publicaddress', 'act_map', 'map_started'])->search('name',$this->search)->get(),
+            'servers'   => Server::select(['serverId', 'name', 'act_players', 'max_players', 'publicaddress', 'act_map', 'map_started'])->search('name',$this->search)->get(),
         ]);
     }
 

@@ -38,11 +38,9 @@ class ServerController extends Controller
      */
     public function show(Server $server)
     {
-        $player = Player::where('playerId', 106500)->first();
-        $players = $server->connectedPlayers()->with('livestats')->get();
         session()->put('current.server', $server);
 
-        return view('pages.servers.show', compact('server', 'players'));
+        return view('pages.servers.show', compact('server'));
     }
 
     /**

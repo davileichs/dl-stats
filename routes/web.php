@@ -22,7 +22,7 @@ Route::get('/welcome', function () {
 });
 
 
-Route::get('/',[ServerController::class, 'index'])->name('index');
+Route::get('/',[ServerController::class, 'index'])->name('home');
 
 Route::get('/games/{server?}',[GameController::class, 'index'])->name('games');
 Route::get('/game/{game}',[GameController::class, 'show'])->name('game.show');

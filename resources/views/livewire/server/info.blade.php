@@ -1,5 +1,5 @@
-<div class="row"  wire:poll>
-    <div class="col-md-3">
+<div class="row" wire:poll.1s>
+    <div class="col-md-5">
         <x-block-clip>
            <x-slot:value>
             {{ $server->act_map }}
@@ -10,7 +10,7 @@
         </x-block-clip>
       </div>
 
-      <div class="col-md-3">
+      <div class="col-md-2">
         <x-block-clip>
             <x-slot:value>
                 {{ $server->act_players }}/{{ $server->max_players }}
@@ -21,7 +21,7 @@
          </x-block-clip>
       </div>
 
-      <div class="col-md-3">
+      <div class="col-md-2">
         <x-block-clip>
             <x-slot:value>
                 {{ $server->map_ct_wins }}:{{ $server->map_ts_wins }}

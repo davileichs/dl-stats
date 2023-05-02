@@ -1,18 +1,18 @@
-<div wire:poll>
+<div>
     <x-table search="hide">
     <x-slot:thead>
         <td>Player</td>
-        <td>Score</td>
+        <td>kills | Deaths</td>
         <td>Time</td>
-        <td>Total Points</td>
+        <td>Points</td>
     </x-slot>
     <x-slot:tbody>
         @foreach ($players as $player)
-        <tr wire:poll>
-            <td>{{ $player->nickname }}</td>
-            <td>{{ $player->nickname }}</td>
+        <tr>
+            <td>{{ $player->name }}</td>
+            <td>{{ $player->kills }} | {{ $player->deaths }}</td>
             <td>{{ $player->time }}</td>
-            <td>{{ $player->skill }}</td>
+            <td>{{ $player->skill_change }}</td>
         </tr>
     @endforeach
     </x-slot>

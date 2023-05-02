@@ -40,6 +40,11 @@ class Server extends Model
         return $this->hasManyThrough(Player::class, Game::class, 'code', 'game' , 'game', 'code');
     }
 
+    public function livestats(): hasOne
+    {
+        return $this->hasOne(Livestats::class, 'server_id', 'serverId');
+    }
+
     public function actions(): HasManyThrough
     {
         return $this->hasManyThrough(Action::class, PlayerAction::class, 'serverId', 'id', 'serverId', 'actionId');
@@ -57,9 +62,7 @@ class Server extends Model
         $ts1 = ($this->map_started);
         $ts2 = time();
         $seconds_diff = $ts2 - $ts1;
-        $minutes = ($seconds_diff/60);
-
-        return intdiv($minutes, 60) . ':'. str_pad(($minutes % 60), 2, '0', STR_PAD_LEFT);
+        return time2string($seconds_diff, ['h', 'm', 's']);
     }
 
     public function getHsKAttribute(): float
