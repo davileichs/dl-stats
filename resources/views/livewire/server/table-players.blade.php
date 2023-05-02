@@ -23,8 +23,8 @@
                     @endforeach
                 </tbody>
             </table>
-        @endforeach
         </div>
+        @endforeach
     </div>
     </div>
 </div>
