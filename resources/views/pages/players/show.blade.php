@@ -9,36 +9,36 @@
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-3">
-                                <img src="{{ $player->avatar }}" class="img-thumbnail border border-warning border-2">
+                                <img src="{{ $player->get()->avatar }}" class="img-thumbnail border border-warning border-2">
                             </div>
                             <div class="col-md-9">
                                 <div class="nav-item dropdown mb-2">
                                     <a class="dropdown-toggle  text-decoration-none text-white" href="#" id="dropPlayerName" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class='h2 text-white text-decoration-none'>{{ $player->nickname }}</span>
+                                    <span class='h2 text-white text-decoration-none'>{{ $player->get()->nickname }}</span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropPlayerName">
                                         <li class="mx-3 my-1 text-secondary">Played also as</li>
-                                        @foreach($player->names as $name)
+                                        @foreach($player->alsoAsName() as $name)
                                         <li class="mx-3 my-1">{{ $name }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
-                                <p class="mt-0"><img src="/images/flags/{{ strtolower($player->flag) }}.gif"> {{ $player->country }}</p>
-                                <p class="mt-4"><a class="btn btn-light btn-sm" href="http://steamcommunity.com/profiles/{{ $player->steam }}" role="button" target="_blank">Steam profile</a></p>
-                                @if ($player->is_online)
+                                <p class="mt-0"><img src="/images/flags/{{ strtolower($player->get()->flag) }}.gif"> {{ $player->get()->country }}</p>
+                                <p class="mt-4"><a class="btn btn-light btn-sm" href="http://steamcommunity.com/profiles/{{ $player->get()->steam_id }}" role="button" target="_blank">Steam profile</a></p>
+                                @if ($player->get()->is_online)
                                     <p class="text-success h6">Online</p>
                                 @else
-                                    <p class="text-danger">Last Access: {{ timeago2string($player->last_event, 4) }}</p>
+                                    <p class="text-danger">Last Access: {{ $player->get()->last_event }}</p>
                                 @endif
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="border border-2 border-warning rounded-1 p-3 bg-dark">
-                            <p class="mb-3 h2">Score: {{ $player->skill }}</p>
-                            <p class="my-3 ">Position: <span class="h4">#{{ $player->ranking }}</span></p>
-                            <p class="my-3 ">First access time: <span class="h5">{{ timeago2string($player->createdate) }}</a></p>
-                            <p class="my-3 ">Total Connection: <span class="h6">{{ time2string($player->connection_time,['d','h','m']) }}</a></p>
+                            <p class="mb-3 h2">Score: {{ $player->get()->skill }}</p>
+                            <p class="my-3 ">Position: <span class="h4">#{{ $player->ranking() }}</span></p>
+                            <p class="my-3 ">First access time: <span class="h5">{{ $player->get()->createdate }}</a></p>
+                            <p class="my-3 ">Total Connection: <span class="h6">{{ $player->get()->connection_time }}</a></p>
                         </div>
                     </div>
                 </div>
@@ -67,9 +67,9 @@
                                 <h5 class="card-title mt-4">Points earned</h5>
                                 <p class="card-text">
                                     <div class="progress">
-                                        <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ $player->rewards['human_percent'] }}%" aria-valuenow="{{ $player->rewards['human_percent'] }}" aria-valuemin="0" aria-valuemax="100">{{ $player->rewards['human_points'] }} - Human</div>
-                                        <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ $player->rewards['neutral_percent'] }}%" aria-valuenow="{{ $player->rewards['neutral_percent'] }}" aria-valuemin="0" aria-valuemax="100">{{ $player->rewards['neutral_points'] }} - Neutral</div>
-                                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: {{ $player->rewards['zombie_percent'] }}%" aria-valuenow="{{ $player->rewards['zombie_percent'] }}" aria-valuemin="0" aria-valuemax="100">{{ $player->rewards['zombie_points'] }} - Zombie</div>
+                                        @foreach($player->rewards() as $team=>$reward)
+                                        <div class="progress-bar progress-bar-striped @if($team == 'human') bg-primary @elseif($team == 'zombie') bg-danger @else bg-secondary @endif" role="progressbar" style="width: {{ $reward['percent'] }}%" aria-valuenow="{{ $reward['percent'] }}" aria-valuemin="0" aria-valuemax="100">{{ $reward['points'] }} - {{ ucfirst($team) }}</div>
+                                        @endforeach
                                     </div>
                                 </p>
                             </div>
@@ -135,8 +135,8 @@
                             <div class="col-md-6 pt-5">
                                     <p class="card-text">
                                         <div class="progress">
-                                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ percent($player->hits, $player->shots) }}%" aria-valuenow="{{ percent($player->hits, $player->shots) }}" aria-valuemin="0" aria-valuemax="100">{{ percent($player->hits, $player->shots) }}% - Hits</div>
-                                            <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ percent_inverse($player->hits, $player->shots) }}%" aria-valuenow="{{ percent_inverse($player->hits, $player->shots) }}" aria-valuemin="0" aria-valuemax="100">{{ percent_inverse($player->hits, $player->shots) }}% - Miss</div>
+                                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ percent($player->get()->hits, $player->get()->shots) }}%" aria-valuenow="{{ percent($player->get()->hits, $player->get()->shots) }}" aria-valuemin="0" aria-valuemax="100">{{ percent($player->get()->hits, $player->get()->shots) }}% - Hits</div>
+                                            <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ percent_inverse($player->get()->hits, $player->get()->shots) }}%" aria-valuenow="{{ percent_inverse($player->get()->hits, $player->get()->shots) }}" aria-valuemin="0" aria-valuemax="100">{{ percent_inverse($player->get()->hits, $player->get()->shots) }}% - Miss</div>
                                         </div>
                                     </p>
                                 <canvas class="bg-white" id="shotsChart" ></canvas>
@@ -191,12 +191,12 @@
 
         const sessionData = [
             @foreach(getDaysLastMonth() as $day)
-            {{ $player->session_points[$day]  ?? 0 }},
+            {{ $player->sessionPoints()[$day]  ?? 0 }},
             @endforeach
         ];
         const sessionConnections = [
             @foreach(getDaysLastMonth() as $day)
-            {{ $player->session_connections[$day]  ?? 0 }},
+            {{ $player->sessionConnections()[$day]  ?? 0 }},
             @endforeach
         ]
 
@@ -216,12 +216,12 @@
         });
 
         const shotsData = [
-            @foreach($player->weapon_shots as $hit=>$shot)
+            @foreach($player->weaponsShots() as $hit=>$shot)
                 {{ $shot }},
             @endforeach
         ];
         const shotsLabel = [
-            @foreach($player->weapon_shots as $hit=>$shot)
+            @foreach($player->weaponsShots() as $hit=>$shot)
                 '{{ $hit }} ',
             @endforeach
 

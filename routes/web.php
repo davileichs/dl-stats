@@ -32,3 +32,7 @@ Route::get('/server/{server}',[ServerController::class, 'show'])->name('server.s
 
 Route::get('/players/{game}',[PlayerController::class, 'index'])->name('players');
 Route::get('/player/{slug}',[PlayerController::class, 'show'])->name('player.show');
+
+
+
+Route::any('{query}', function() { return redirect('/'); })->where('query', '.*');

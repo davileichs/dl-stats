@@ -4,7 +4,7 @@
 @include('parts.server-nav')
 <x-container>
     <x-slot:title>
-        {{ $server->name }}
+        {{ $server->get()->name }}
     </x-slot>
     <x-slot:head>
 
@@ -19,11 +19,11 @@
             </nav>
             <div class="tab-content pt-4" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
-                    <livewire:server.info :server="$server" />
-                    <livewire:server.table-players :server="$server" />
+                    <livewire:server.info :server="$server->get()" />
+                    <livewire:server.table-players :server="$server->get()" />
                 </div>
                 <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
-                    @include('pages.servers.top-tab')
+                    @include('pages.servers.top-players-tab')
                 </div>
             </div>
 

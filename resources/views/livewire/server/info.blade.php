@@ -13,7 +13,7 @@
       <div class="col-md-2">
         <x-block-clip>
             <x-slot:value>
-                {{ $server->act_players -1 }}/{{ $server->max_players -1  }}
+                {{ $server->number_players  }}
             </x-slot>
             <x-slot:title>
                 Players
@@ -24,7 +24,7 @@
       <div class="col-md-2">
         <x-block-clip>
             <x-slot:value>
-                {{ $server->map_ct_wins }}:{{ $server->map_ts_wins }}
+                {{ $server->round }}
             </x-slot>
             <x-slot:title>
                 Round

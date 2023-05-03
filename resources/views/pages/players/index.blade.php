@@ -7,7 +7,7 @@
         Players
     </x-slot>
     <x-slot:body>
-    <livewire:player.table-players wire:key='playerId' />
+    <livewire:player.table-players wire:key='playerId' :server="$server->get()" />
     </x-slot>
 </x-container>
 @endsection

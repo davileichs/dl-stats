@@ -2,7 +2,7 @@
     <x-table search="hide">
     <x-slot:thead>
         <td>Server</td>
-        <td>Round</td>
+        <td>Players</td>
         <td>Address</td>
         <td>Map</td>
         <td>Played</td>
@@ -11,7 +11,7 @@
     @forelse ($servers as $server)
         <tr>
             <td><a href="{{ route('server.show', $server) }}" class="link-secondary">{{ $server->name }}</a></td>
-            <td>{{ $server->act_players }}/{{ $server->max_players }}</td>
+            <td>{{ $server->number_players }}</td>
             <td><a href="steam://connect/{{ $server->publicaddress }}\" class="link-secondary">{{ $server->publicaddress }}</a></td>
             <td>{{ $server->act_map }}</td>
             <td>{{ $server->played }}</td>

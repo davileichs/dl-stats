@@ -55,11 +55,11 @@ if (! function_exists('getSteamProfileId')) {
 if (! function_exists('getSteamAvatar')) {
     function getSteamAvatar(string $steamId): string
     {
+        $avatar = '/images/unknown.jpg';
         $steamUrl = "http://steamcommunity.com/profiles/".$steamId;
         $page = Http::get($steamUrl);
         $html = $page->body();
         preg_match('/\<link rel=\"image_src\" href=\"(.*)\"\>/', $html, $match);
-        $avatar = '/images/unknown.jpg';
         if(!empty($match[1])) {
             $avatar = $match[1];
         }

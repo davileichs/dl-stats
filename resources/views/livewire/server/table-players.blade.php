@@ -4,7 +4,7 @@
         @foreach($teams as $team=>$players)
         @php $class = match($team){ 'zombies' => "danger", 'humans' => 'primary', 'spectator' => 'secondary'} @endphp
         <div class="col-md-12 mt-3">
-            <div class="h4 bg-{{ $class }} m-0">{{ ucfirst($team) }} - {{ $players->count() }}</div>
+            <div class="h4 bg-{{ $class }} m-0">{{ ucfirst($team) }} - {{ count($players) }}</div>
             <table class="table table-striped m-0">
                 <thead class="table-dark g-0 p-0">
                     <td>Player</td>

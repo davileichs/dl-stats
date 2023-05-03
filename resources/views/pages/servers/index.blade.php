@@ -6,7 +6,7 @@
         Servers
     </x-slot>
     <x-slot:body>
-        <livewire:server.table-servers />
+        <livewire:server.table-servers :servers="$servers" />
     </x-slot>
 </x-container>
 @endsection
