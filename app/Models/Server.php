@@ -7,6 +7,7 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\hasOne;
 use Illuminate\Support\Collection;
@@ -30,6 +31,11 @@ class Server extends Model
     public function scopeActive(Builder $query): void
     {
         $query->where('players', '>', '0');
+    }
+
+    public function serverLoads(): HasMany
+    {
+        return $this->hasMany(ServerLoad::class, 'server_id', 'serverId' );
     }
 
     public function games(): hasOne

@@ -98,7 +98,7 @@ class Player extends Model
         );
     }
 
-    protected function last_event(): Attribute
+    protected function lastEvent(): Attribute
     {
         return Attribute::make(
             get: fn (string $value) => timeago2string($value, 3),
@@ -132,11 +132,6 @@ class Player extends Model
     public function getNicknameAttribute()
     {
         return $this->lastName;
-    }
-
-    public function getTimeAttribute(): string
-    {
-        return time2string($this->connection_time, ['d','h']);
     }
 
 }

@@ -26,16 +26,16 @@ class PlayerService {
         return Player::select('*');
     }
 
-    public static function get(): Player
+    public static function get(?string $field = null): String|Player
     {
-        try {
-            if(empty(self::$player) || !self::$player->exists) {
-                throw new \Exception("No server found", 1);
-            }
-            return self::$player;
-        } catch(\Exception $e) {
-            abort(404);
+        abort_if(!isset(self::$player), 404, 'No Player found');
+        abort_if(!self::$player->exists, 404, 'No Player found');
+
+        if($field) {
+            return self::$player->{$field};
         }
+
+        return self::$player;
     }
 
     public static function list(?string $search = null)

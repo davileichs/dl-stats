@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Models\Action;
 use App\Models\Server;
+use App\Models\ServerLoad;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -26,8 +27,11 @@ class ServerService {
         return Server::select('*');
     }
 
-    public static function get(): Server
+    public static function get(?string $field = null): string|Server
     {
+        if($field) {
+            return self::$server->{$field};
+        }
         return self::$server;
     }
 
@@ -42,15 +46,8 @@ class ServerService {
 
     public static function set(Server $server): self
     {
-        try {
-            if(!$server->exists) {
-                throw new \Exception("No server found", 1);
-            }
-            self::$server = $server;
-
-        } catch(\Exception $e) {
-            abort(404);
-        }
+        self::$server = $server;
+        abort_if(!self::$server->exists, 404, 'No Player found');
 
         return new self();
     }
@@ -92,23 +89,73 @@ class ServerService {
         return $teams;
     }
 
+    public function statistics($period): array
+    {
+        $periodTimestamp = null;
+        $reduce = 0;
+
+        if($period == 'lastDay') {
+            $periodTimestamp = Carbon::now()->subDay()->timestamp;
+            $reduce = 3;
+        }
+        if($period == 'lastWeek') {
+            $periodTimestamp = Carbon::now()->subWeek()->timestamp;
+            $reduce = 20;
+        }
+        if($period == 'lastMonth') {
+            $periodTimestamp = Carbon::now()->subMonth()->timestamp;
+            $reduce = 100;
+        }
+        if($period == 'lastYear') {
+            $periodTimestamp = Carbon::now()->subYear()->timestamp;
+            $reduce = 500;
+        }
+        return $this->getServerLoad($periodTimestamp);
+    }
+
+    protected function getServerLoad(?int $timestampInit = null, ?int $reduce = 1): array
+    {
+        \DB::enableQueryLog();
+        $conn = config('database.active_stats');
+        $loads = \DB::connection($conn)->select("
+                SELECT * FROM
+            ( SELECT @row := @row +1 AS rownum, `timestamp`, act_players, map, server_id
+                FROM ( SELECT @row :=0) r, hlstats_server_load
+            ) ranked
+        where `server_id` = ?
+        and rownum % ? = 0
+        and `timestamp` >= ? order by `timestamp` desc", [self::get('serverId'), $reduce, $timestampInit]);
+
+        //dd(\DB::getQueryLog());
+        $stats = [];
+        foreach($loads as $k=>$load) {
+            $date = Carbon::createFromTimestamp($load->timestamp)->format('d-m H:s');
+            $stats[] = array(
+                'date'  => $date,
+                'act_players' => $load->act_players,
+                'map' => $load->map
+            );
+        }
+        return $stats;
+    }
+
 
     protected function getTopFrom(array $codes)
     {
         return Action::select([
-            'Players.playerId',
-            'Players.lastName',
-            \DB::raw('SUM(reward_player) as points')
+                'Players.playerId',
+                'Players.lastName',
+                \DB::raw('SUM(reward_player) as points')
             ])
-        ->join('Events_PlayerActions', 'Events_PlayerActions.actionId', 'Actions.id')
-        ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
-        ->groupBy('Players.playerId')
-        ->whereIn('code', $codes)
-        ->where('Players.hideranking', 0)
-        ->where('Players.game', self::get()->game)
-        ->where('eventTime', '>=', Carbon::now()->subMonth())
-        ->groupBy(['Players.playerId'])
-        ->orderBy('points', 'desc')
+            ->join('Events_PlayerActions', 'Events_PlayerActions.actionId', 'Actions.id')
+            ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
+            ->groupBy('Players.playerId')
+            ->whereIn('code', $codes)
+            ->where('Players.hideranking', 0)
+            ->where('Players.game', self::get()->game)
+            ->where('eventTime', '>=', Carbon::now()->subMonth())
+            ->groupBy(['Players.playerId'])
+            ->orderBy('points', 'desc')
         ->limit(10);
     }
 
@@ -165,7 +212,7 @@ class ServerService {
         return $this->getTopFrom([
             'ze_infector_first', 'ze_infector_second', 'ze_infector_third',
             'ze_infector_first_hh', 'ze_infector_second_hh', 'ze_infector_third_hh',
-            ])->get();
+        ])->get();
     }
 
     public function players()

@@ -17,7 +17,7 @@
             <td><div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                 <div class="progress-bar" style="width: {{ $player->activity }}%"></div>
             </div></td>
-            <td>{{ $player->time }}</td>
+            <td>{{ $player->connection_time }}</td>
 
             <td>{{ $player?->games()->first()->name ?? 'none' }}</td>
 

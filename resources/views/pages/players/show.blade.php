@@ -14,7 +14,7 @@
                             <div class="col-md-9">
                                 <div class="nav-item dropdown mb-2">
                                     <a class="dropdown-toggle  text-decoration-none text-white" href="#" id="dropPlayerName" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class='h2 text-white text-decoration-none'>{{ $player->get()->nickname }}</span>
+                                    <span class='h2 text-white text-decoration-none'>{{ $player->get('nickname') }}</span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropPlayerName">
                                         <li class="mx-3 my-1 text-secondary">Played also as</li>
