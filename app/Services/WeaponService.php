@@ -198,7 +198,13 @@ class WeaponService {
         }
 
         $rows = $weapon->weaponsHits()
-            ->with('players')
+            ->select([
+                'Players.lastName as nickname',
+                'Players.playerId',
+                'Events_Statsme.*'
+            ])
+            ->join('Players', 'Players.playerId', 'Events_Statsme.playerId')
+            ->where('hideRanking', 0)
             ->whereDate('eventTime', $date)
             ->orderBy('Events_Statsme.eventTime', 'asc')
             ->get();
@@ -210,23 +216,23 @@ class WeaponService {
 
             if($k == 0 || strcmp($rows[($k-1)]->map, $row->map) !== 0) {
                 $newKey = substr($row->eventTime, -8, 5);
-                $list[$newKey] = ['map' => $row->map, 'players' => array()];
+                $list[$newKey] = ['map' => $row->map, 'players' => array(), 'end_at' => null];
+            } else {
+                $list[$newKey]['end_at'] = substr($row->eventTime, -8, 5);
             }
 
-            if ($row->players()->exists()) {
-                if(empty($list[$newKey]['players'][$row->playerId])) {
-                    $list[$newKey]['players'][$row->playerId] = (object)([
-                        'playerId'  => $row->playerId,
-                        'nickname'  => $row->players()->first()->nickname ?? '',
-                        'shots'     => $row->shots,
-                        'hits'      => $row->hits,
-                        'damage'    => $row->damage,
-                    ]);
-                } else {
-                    $list[$newKey]['players'][$row->playerId]->shots += $row->shots;
-                    $list[$newKey]['players'][$row->playerId]->hits += $row->hits;
-                    $list[$newKey]['players'][$row->playerId]->damage += $row->damage;
-                }
+            if(empty($list[$newKey]['players'][$row->playerId])) {
+                $list[$newKey]['players'][$row->playerId] = (object)([
+                    'playerId'  => $row->playerId,
+                    'nickname'  => $row->nickname ?? '',
+                    'shots'     => $row->shots,
+                    'hits'      => $row->hits,
+                    'damage'    => $row->damage,
+                ]);
+            } else {
+                $list[$newKey]['players'][$row->playerId]->shots += $row->shots;
+                $list[$newKey]['players'][$row->playerId]->hits += $row->hits;
+                $list[$newKey]['players'][$row->playerId]->damage += $row->damage;
             }
 
 

@@ -74,7 +74,7 @@
                                 <x-slot:tbody>
                                     @foreach ($weapon->mapUsage() as $time=>$items)
                                         <tr class="table-primary text-center h5">
-                                            <td colspan="5">{{  $items['map'] . ' - session at ' . $time }}</td>
+                                            <td colspan="5">{{  $items['map'] . ' - session from ' . $time . ' to ' . $items['end_at'] }}</td>
                                         </tr>
                                         @foreach($items['players'] as $k=>$player)
                                             <tr>

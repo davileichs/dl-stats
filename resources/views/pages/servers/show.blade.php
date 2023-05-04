@@ -24,8 +24,7 @@
                     @include('pages.servers.stats-players-tab')
                 </div>
                 <div class="tab-pane fade" id="nav-topplayers" role="tabpanel" aria-labelledby="nav-topplayers-tab">
-                    Desactived for a while because it demands too much memory for the poor server
-                    <!--@include('pages.servers.top-players-tab') -->
+                    @include('pages.servers.top-players-tab')
                 </div>
                 <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
                     @include('pages.servers.statistics-server-tab')
