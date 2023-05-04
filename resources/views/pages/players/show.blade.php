@@ -117,14 +117,14 @@
                                         <th>Accuracy</th>
                                     </x-slot>
                                     <x-slot:tbody>
-                                        @foreach ($player->listWeapons() as $k=>$weapon)
+                                        @foreach ($player->listWeaponsHits() as $k=>$weapon)
                                         <tr>
                                             <td>{{ $k+1 }}</td>
-                                            <td><img src="/images/weapons/{{ $weapon->weapon }}.png" width="110" height="30"></td>
+                                            <td><a href="{{ route('weapon.show', [$server->get()->game, $weapon->weapon]) }}" class="link-secondary"><img src="/images/weapons/{{ $weapon->weapon }}.png" width="110" height="30"></a></td>
                                             <td>{{ number_format($weapon->shots) }}</td>
                                             <td>{{ number_format($weapon->hits) }}</td>
                                             <td>{{ number_format($weapon->damage) }}</td>
-                                            <td>{{ percent($weapon->hits, $weapon->shots) }}%</td>
+                                            <td>{{ $weapon->accuracy }}%</td>
                                             </tr>
                                         @endforeach
                                     </x-slot>
@@ -232,7 +232,7 @@
             data: {
                     labels: shotsLabel,
                     datasets: [{
-                        label: "Shots",
+                        label: "Hits",
                         data: shotsData,
                         fill: true,
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',

@@ -22,7 +22,7 @@ class ServerController extends Controller
      */
     public function show(Server $server)
     {
-        $server = ServerService::set($server);
+        $server = ServerService::find($server);
         return view('pages.servers.show', compact('server'));
     }
 

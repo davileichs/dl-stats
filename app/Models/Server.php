@@ -63,6 +63,16 @@ class Server extends Model
         return $this->hasManyThrough(Player::class, Livestats::class, 'server_id', 'playerId' , 'serverId', 'player_id');
     }
 
+    public function weaponsHits(): HasMany
+    {
+        return $this->hasMany(PlayerWeaponHits::class, 'serverId', 'serverId');
+    }
+
+    public function weaponShots(): hasMany
+    {
+        return $this->hasMany(PlayerWeaponShot::class, 'serverId', 'serverId');
+    }
+
     protected function actPlayers(): Attribute
     {
         return Attribute::make(

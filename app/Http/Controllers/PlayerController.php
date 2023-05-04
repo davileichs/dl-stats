@@ -26,7 +26,7 @@ class PlayerController extends Controller
     public function show(int $playerId)
     {
         $player = PlayerService::find($playerId);
-        $server = PlayerService::server();
+        $server = $player::server();
 
         return view('pages.players.show', compact('player', 'server'));
     }

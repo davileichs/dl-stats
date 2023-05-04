@@ -29,8 +29,6 @@
                     @include('pages.servers.statistics-server-tab')
                 </div>
             </div>
-
-
           </div>
 
     </x-slot>

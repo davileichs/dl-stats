@@ -22,6 +22,8 @@ class Player extends Model
 
     protected $table = "Players";
 
+    protected $primaryKey = 'playerId';
+
 
     public function __construct()
     {
@@ -51,9 +53,9 @@ class Player extends Model
         return $this->hasOne(Livestats::class, 'player_id', 'playerId');
     }
 
-    public function weapons(): hasMany
+    public function weaponsHits(): hasMany
     {
-        return $this->hasMany(PlayerWeapon::class, 'playerId', 'playerId');
+        return $this->hasMany(PlayerWeaponHits::class, 'playerId', 'playerId');
     }
 
     public function weaponShots(): hasMany

@@ -12,9 +12,7 @@ class TablePlayers extends Component
     use WithPagination;
 
     public $search;
-
     public $server;
-
     protected $paginationTheme = 'bootstrap';
 
 

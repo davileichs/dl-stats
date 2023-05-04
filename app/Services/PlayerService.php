@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 class PlayerService {
 
 
-    protected static Player $player;
+    protected static ?Player $player;
     protected static string $game;
 
 
@@ -56,9 +56,15 @@ class PlayerService {
     }
 
 
-    public static function find(int $playerId): Self
+    public static function find(int|Player $player): Self
     {
-        self::$player = self::model()->where('playerId', $playerId)->first();
+        if($player instanceof Player) {
+            self::$player = $player;
+        } else {
+            self::$player = self::model()->find($player) ?? null;
+        }
+        abort_if((!self::$player || !self::$player->exists), 404, 'No Player found');
+
         return new self();
     }
 
@@ -79,7 +85,7 @@ class PlayerService {
     public static function server()
     {
         $player = self::get();
-        return ServerService::set($player->servers()->first());
+        return ServerService::find($player->servers()->first());
     }
 
     public static function sessionPoints(): array
@@ -170,10 +176,10 @@ class PlayerService {
             ->get();
     }
 
-    public static function listWeapons(): \Illuminate\Database\Eloquent\Collection
+    public static function listWeaponsHits(): \Illuminate\Database\Eloquent\Collection
     {
         $player = self::get();
-        return $player->weapons()
+        return $player->weaponsHits()
             ->select([
                 \DB::raw('SUM(hits) as hits'),
                 \DB::raw('SUM(damage) as damage'),

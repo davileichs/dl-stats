@@ -44,10 +44,15 @@ class ServerService {
         return $servers->get();
     }
 
-    public static function set(Server $server): self
+    public static function find(Server $server): self
     {
-        self::$server = $server;
-        abort_if(!self::$server->exists, 404, 'No Player found');
+        if($server instanceof Server) {
+            self::$server = $server;
+        } else {
+            self::$server = self::model()->where('serverId', $server)->first();
+        }
+
+        abort_if(!self::$server->exists, 404, 'No Server found');
 
         return new self();
     }
@@ -56,7 +61,7 @@ class ServerService {
     {
         $server = self::model()->where('game' , $game)->first();
         self::$game = $game;
-        return self::set($server);
+        return self::find($server);
     }
 
     public static function livestatsByTeam(): ?Collection
@@ -232,6 +237,53 @@ class ServerService {
             'ze_infector_first', 'ze_infector_second', 'ze_infector_third',
             'ze_infector_first_hh', 'ze_infector_second_hh', 'ze_infector_third_hh',
         ])->get();
+    }
+
+    public static function mapUsage(?string $date = null): array
+    {
+
+        $server = self::$server;
+        if(!$date) {
+            $date = Carbon::now()->toDateString();
+        }
+
+        $rows = $server->weaponsHits()
+            ->with('players')
+            ->whereDate('eventTime', $date)
+            ->orderBy('Events_Statsme.eventTime', 'asc')
+            ->get();
+
+        $list = array();
+        $count = 1;
+        foreach($rows as $k=>$row) {
+
+            if($k == 0 || strcmp($rows[($k-1)]->map, $row->map) !== 0) {
+                $newKey = substr($row->eventTime, -8, 5);
+                $list[$newKey] = ['map' => $row->map, 'players' => array()];
+            }
+
+            if ($row->players()->exists()) {
+                if(empty($list[$newKey]['players'][$row->playerId])) {
+                    $list[$newKey]['players'][$row->playerId] = (object)([
+                        'playerId'  => $row->playerId,
+                        'nickname'  => $row->players()->first()->nickname ?? '',
+                        'shots'     => $row->shots,
+                        'hits'      => $row->hits,
+                        'damage'    => $row->damage,
+                    ]);
+                } else {
+                    $list[$newKey]['players'][$row->playerId]->shots += $row->shots;
+                    $list[$newKey]['players'][$row->playerId]->hits += $row->hits;
+                    $list[$newKey]['players'][$row->playerId]->damage += $row->damage;
+                }
+            }
+
+
+        }
+        foreach($list as &$key) {
+                $key['players'] =  Collection::make($key['players'])->sortByDesc('damage');
+        }
+       return (array_reverse($list));
     }
 
     public function players()

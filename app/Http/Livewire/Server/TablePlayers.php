@@ -13,7 +13,7 @@ class TablePlayers extends Component
     public function render()
     {
         return view('livewire.server.table-players', [
-            'teams'   => ServerService::set($this->server)->livestatsByTeam(),
+            'teams'   => ServerService::find($this->server)->livestatsByTeam(),
         ]);
 
     }

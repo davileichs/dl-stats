@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\PlayerController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\WeaponController;
 use App\Http\Controllers\GameController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +31,10 @@ Route::get('/servers',[ServerController::class, 'index'])->name('servers');
 Route::get('/server/{server}',[ServerController::class, 'show'])->name('server.show');
 
 Route::get('/players/{game}',[PlayerController::class, 'index'])->name('players');
-Route::get('/player/{slug}',[PlayerController::class, 'show'])->name('player.show');
+Route::get('/player/{playerId}',[PlayerController::class, 'show'])->name('player.show');
+
+Route::get('/weapons/{game}',[WeaponController::class, 'index'])->name('weapons');
+Route::get('/weapon/{game}/{code}',[WeaponController::class, 'show'])->name('weapon.show');
 
 
 
