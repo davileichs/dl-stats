@@ -71,14 +71,13 @@ class ServerService {
         foreach($livestats as $row) {
             switch($row->team) {
                 case 'CT':
-                case 'TERRORIST':
                     $teams['humans']->push($row);
                     break;
-                case 'Spectator':
-                    $teams['spectator']->push($row);
+                case 'TERRORIST':
+                    $teams['zombies']->push($row);
                     break;
                 default:
-                    $teams['zombies']->push($row);
+                    $teams['spectator']->push($row);
                     break;
             }
         }
@@ -89,33 +88,39 @@ class ServerService {
         return $teams;
     }
 
-    public function statistics($period): array
-    {
-        $periodTimestamp = null;
-        $reduce = 0;
+    public function statisticsDay(string $day = '') {
+        $periodTimestamp = Carbon::now()->subDay()->timestamp;
+        $reduce = 1;
 
-        if($period == 'lastDay') {
-            $periodTimestamp = Carbon::now()->subDay()->timestamp;
-            $reduce = 3;
-        }
-        if($period == 'lastWeek') {
-            $periodTimestamp = Carbon::now()->subWeek()->timestamp;
-            $reduce = 20;
-        }
-        if($period == 'lastMonth') {
-            $periodTimestamp = Carbon::now()->subMonth()->timestamp;
-            $reduce = 100;
-        }
-        if($period == 'lastYear') {
-            $periodTimestamp = Carbon::now()->subYear()->timestamp;
-            $reduce = 500;
-        }
-        return $this->getServerLoad($periodTimestamp);
+        return $this->getServerLoad($periodTimestamp, $reduce);
     }
 
-    protected function getServerLoad(?int $timestampInit = null, ?int $reduce = 1): array
+    public function statisticsWeek(string $week = '') {
+        $periodTimestamp = Carbon::now()->subWeek()->timestamp;
+        $reduce = 2;
+
+        return $this->getServerLoad($periodTimestamp, $reduce);
+    }
+
+    public function statisticsMonth(string $month = '') {
+        $periodTimestamp = Carbon::now()->subMonth()->timestamp;
+        $reduce = 5;
+
+        return $this->getServerLoad($periodTimestamp, $reduce);
+    }
+
+    public function statisticsYear(string $year = '') {
+        $periodTimestamp = Carbon::now()->subYear()->timestamp;
+        $reduce = 20;
+
+        return $this->getServerLoad($periodTimestamp, $reduce);
+    }
+
+
+    protected function getServerLoad(?int $timestampInit = null, ?int $reduce = 1, ?int $timestampEnd = null): array
     {
-        \DB::enableQueryLog();
+        $timestampEnd = Carbon::now()->timestamp;
+
         $conn = config('database.active_stats');
         $loads = \DB::connection($conn)->select("
                 SELECT * FROM
@@ -124,17 +129,31 @@ class ServerService {
             ) ranked
         where `server_id` = ?
         and rownum % ? = 0
-        and `timestamp` >= ? order by `timestamp` desc", [self::get('serverId'), $reduce, $timestampInit]);
+        and `timestamp` >= ? and `timestamp` <= ? order by `timestamp` asc", [self::get('serverId'), $reduce, $timestampInit, $timestampEnd]);
 
-        //dd(\DB::getQueryLog());
         $stats = [];
+        $act_players = 0;
+
         foreach($loads as $k=>$load) {
-            $date = Carbon::createFromTimestamp($load->timestamp)->format('d-m H:s');
-            $stats[] = array(
-                'date'  => $date,
-                'act_players' => $load->act_players,
-                'map' => $load->map
-            );
+            $day = Carbon::createFromTimestamp($load->timestamp)->format('d-m');
+            $hour = ($reduce<=2) ? Carbon::createFromTimestamp($load->timestamp)->format('H:s') : '';
+            $map = ($reduce==1) ? $load->map : '';
+
+            if($k % $reduce == 0 && $k > 0) {
+                $act_players = round($act_players/$reduce);
+
+                $stats[] = array(
+                    'day'  => $day,
+                    'hour' => $hour,
+                    'act_players' => $act_players,
+                    'map' => $map
+                );
+                $act_players = $load->act_players;
+
+            } else {
+                $act_players += $load->act_players;
+            }
+
         }
         return $stats;
     }

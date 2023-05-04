@@ -63,6 +63,13 @@ class Server extends Model
         return $this->hasManyThrough(Player::class, Livestats::class, 'server_id', 'playerId' , 'serverId', 'player_id');
     }
 
+    protected function actPlayers(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => ($this->max_players == 65) ? $value-1 : $value,
+        );
+    }
+
 
     public function getPlayedAttribute(): string
     {
