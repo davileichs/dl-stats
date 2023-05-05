@@ -192,56 +192,7 @@ class WeaponService {
 
     public static function mapUsage(?string $date = null): array
     {
-
-        $weapon = self::$weapon;
-        if(!$date) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        $rows = $weapon->weaponsHits()
-            ->select([
-                'Players.lastName as nickname',
-                'Players.playerId',
-                'Events_Statsme.*'
-            ])
-            ->join('Players', 'Players.playerId', 'Events_Statsme.playerId')
-            ->where('hideRanking', 0)
-            ->whereDate('eventTime', $date)
-            ->orderBy('Events_Statsme.eventTime', 'asc')
-            ->get();
-
-
-        $list = array();
-        $count = 1;
-        foreach($rows as $k=>$row) {
-
-            if($k == 0 || strcmp($rows[($k-1)]->map, $row->map) !== 0) {
-                $newKey = substr($row->eventTime, -8, 5);
-                $list[$newKey] = ['map' => $row->map, 'players' => array(), 'end_at' => null];
-            } else {
-                $list[$newKey]['end_at'] = substr($row->eventTime, -8, 5);
-            }
-
-            if(empty($list[$newKey]['players'][$row->playerId])) {
-                $list[$newKey]['players'][$row->playerId] = (object)([
-                    'playerId'  => $row->playerId,
-                    'nickname'  => $row->nickname ?? '',
-                    'shots'     => $row->shots,
-                    'hits'      => $row->hits,
-                    'damage'    => $row->damage,
-                ]);
-            } else {
-                $list[$newKey]['players'][$row->playerId]->shots += $row->shots;
-                $list[$newKey]['players'][$row->playerId]->hits += $row->hits;
-                $list[$newKey]['players'][$row->playerId]->damage += $row->damage;
-            }
-
-
-        }
-        foreach($list as &$key) {
-                $key['players'] =  Collection::make($key['players'])->sortByDesc('damage');
-        }
-       return (array_reverse($list));
+        return MapService::mapUsage(self::$weapon);
     }
 
 

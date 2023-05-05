@@ -3,6 +3,7 @@
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\WeaponController;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\GameController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,7 @@ Route::get('/player/{playerId}',[PlayerController::class, 'show'])->name('player
 Route::get('/weapons/{game}',[WeaponController::class, 'index'])->name('weapons');
 Route::get('/weapon/{game}/{code}',[WeaponController::class, 'show'])->name('weapon.show');
 
-
+Route::get('/maps/{game}',[MapController::class, 'index'])->name('maps');
+Route::get('/map/{game}/{map}',[MapController::class, 'show'])->name('map.show');
 
 Route::any('{query}', function() { return redirect('/'); })->where('query', '.*');

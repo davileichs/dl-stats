@@ -52,7 +52,6 @@ class PlayerService {
                 ->paginate(50);
         }
         return $players;
-
     }
 
 

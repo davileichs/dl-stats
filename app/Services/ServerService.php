@@ -50,7 +50,7 @@ class ServerService {
         return $servers->get();
     }
 
-    public static function find(Server $server): self
+    public static function find(string|Server $server): self
     {
         if($server instanceof Server) {
             self::$server = $server;
@@ -191,61 +191,61 @@ class ServerService {
 
     public function topTriggerPlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topTrigger = Cache::remember('topTrigger', $this->cacheExpire, function() {
             return $this->getTopFrom(['trigger', 'trigger_hh'])->get();
         });
-        return $top;
+        return $topTrigger;
     }
 
     public function topDefenderPlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topDefender = Cache::remember('topDefender', $this->cacheExpire, function() {
             return $this->getTopFrom([
                 'ze_defender_third', 'ze_defender_second', 'ze_defender_first',
                 'ze_defender_first_hh', 'ze_defender_second_hh', 'ze_defender_third_hh'
             ])->get();
         });
-        return $top;
+        return $topDefender;
     }
 
-    public function topWinnerExtremePlayers()
+    public function topWinnerPlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
-            $this->getTopFrom(['event_win_4', 'ze_h_win_3_hh'])->get();
+        $topWinner = Cache::remember('topWinner', $this->cacheExpire, function() {
+            $this->getTopFrom(['event_win_4', 'ze_h_win_3_hh','event_win_3', 'ze_h_win_2_hh','event_win_2', 'ze_h_win_1_hh'])->get();
         });
-        return $top;
+        return $topWinner;
     }
 
     public function topBossDamagePlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topDamage = Cache::remember('topDamage', $this->cacheExpire, function() {
             return $this->getTopFrom([
                 'ze_boss_damage_first', 'ze_boss_damage_second', 'ze_boss_damage_third',
                 'ze_boss_damage_first_hh', 'ze_boss_damage_second_hh', 'ze_boss_damage_third_hh'
             ])->get();
         });
-        return $top;
+        return $topDamage;
     }
 
     public function topSoloPlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topSolo = Cache::remember('topSolo', $this->cacheExpire, function() {
             return $this->getTopFrom(['ze_h_win_solo', 'ze_h_win_solo_hh'])->get();
         });
-        return $top;
+        return $topSolo;
     }
 
     public function topZombieDamagePlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topZombieDamage = Cache::remember('topZombieDamage', $this->cacheExpire, function() {
             return $this->getTopFrom(['ze_damage_zombie', 'ze_damage_zombie_hh'])->get();
         });
-        return $top;
+        return $topZombieDamage;
     }
 
     public function topMotherZombiePlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topZombie = Cache::remember('topZombie', $this->cacheExpire, function() {
             return $this->getTopFrom([
                 'ze_m_win_0','ze_m_kill_streak_12', 'ze_m_kill_streak_11', 'ze_m_kill_streak_10',
                 'ze_m_kill_streak_09', 'ze_m_kill_streak_08', 'ze_m_kill_streak_07', 'ze_m_kill_streak_06',
@@ -255,73 +255,23 @@ class ServerService {
                 'ze_m_kill_streak_05_hh', 'ze_m_kill_streak_04_hh', 'ze_m_kill_streak_03_hh', 'ze_m_kill_streak_02_hh',
             ])->get();
         });
-        return $top;
+        return $topZombie;
     }
 
     public function topInfectorPlayers()
     {
-        $top = Cache::remember('top', $this->cacheExpire, function() {
+        $topInfector = Cache::remember('topInfector', $this->cacheExpire, function() {
             return $this->getTopFrom([
                 'ze_infector_first', 'ze_infector_second', 'ze_infector_third',
                 'ze_infector_first_hh', 'ze_infector_second_hh', 'ze_infector_third_hh',
             ])->get();
         });
-        return $top;
+        return $topInfector;
     }
 
     public static function mapUsage(?string $date = null): array
     {
-        $server = self::$server;
-        if(!$date) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        $cacheExpire = Carbon::now()->addMinutes(10);
-        $rows = Cache::remember('rows', $cacheExpire, function() use($server, $date) {
-            return $server->weaponsHits()
-            ->select([
-                'Players.lastName as nickname',
-                'Players.playerId',
-                'Events_Statsme.*'
-            ])
-            ->join('Players', 'Players.playerId', 'Events_Statsme.playerId')
-            ->where('hideRanking', 0)
-            ->whereDate('eventTime', $date)
-            ->orderBy('Events_Statsme.eventTime', 'asc')
-            ->get();
-        });
-
-
-        $list = array();
-        $count = 1;
-        foreach($rows as $k=>$row) {
-
-            if($k == 0 || strcmp($rows[($k-1)]->map, $row->map) !== 0) {
-                $newKey = substr($row->eventTime, -8, 5);
-                $list[$newKey] = ['map' => $row->map, 'players' => array(), 'end_at' => null];
-            } else {
-                $list[$newKey]['end_at'] = substr($row->eventTime, -8, 5);
-            }
-
-            if(empty($list[$newKey]['players'][$row->playerId])) {
-                $list[$newKey]['players'][$row->playerId] = (object)([
-                    'playerId'  => $row->playerId,
-                    'nickname'  => $row->nickname ?? '',
-                    'shots'     => $row->shots,
-                    'hits'      => $row->hits,
-                    'damage'    => $row->damage,
-                ]);
-            } else {
-                $list[$newKey]['players'][$row->playerId]->shots += $row->shots;
-                $list[$newKey]['players'][$row->playerId]->hits += $row->hits;
-                $list[$newKey]['players'][$row->playerId]->damage += $row->damage;
-            }
-
-        }
-        foreach($list as &$key) {
-                $key['players'] =  Collection::make($key['players'])->sortByDesc('damage');
-        }
-       return (array_reverse($list));
+        return MapService::mapUsage(self::$server);
     }
 
     public function players()

@@ -15,7 +15,7 @@ class TopPlayers extends Component
         return view('livewire.server.top-players', [
             'topTriggerPlayers'   => ServerService::find($this->server)->topTriggerPlayers(),
             'topDefenderPlayers'   => ServerService::find($this->server)->topDefenderPlayers(),
-            'topWinnerExtremePlayers'   => ServerService::find($this->server)->topWinnerExtremePlayers(),
+            'topWinnerPlayers'   => ServerService::find($this->server)->topWinnerPlayers(),
             'topBossDamagePlayers'   => ServerService::find($this->server)->topBossDamagePlayers(),
             'topSoloPlayers'   => ServerService::find($this->server)->topSoloPlayers(),
             'topZombieDamagePlayers'   => ServerService::find($this->server)->topZombieDamagePlayers(),

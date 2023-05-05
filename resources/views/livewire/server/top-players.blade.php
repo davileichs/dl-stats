@@ -18,7 +18,7 @@
         </div>
 
         <div class="col-md-4">
-            <x-top-block :topPlayers="$topWinnerExtremePlayers">
+            <x-top-block :topPlayers="$topWinnerPlayers">
                 <x-slot:title>
                     TOP Winner in Extreme
                 </x-slot>

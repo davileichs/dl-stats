@@ -5,6 +5,7 @@
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ route('server.show', $server->get()) }}">Server</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('players', $server->get()->game) }}">Players</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('weapons', $server->get()->game) }}">Weapons</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('maps', $server->get()->game) }}">Maps</a></li>
             </ul>
         </div>
     </div>
