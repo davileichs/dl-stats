@@ -162,6 +162,7 @@ class WeaponService {
             ])
             ->join('Players', 'Players.playerId', 'Events_Statsme.playerId')
             ->where('Events_Statsme.shots', '>', '1000')
+            ->where('Players.hideRanking', '0')
             ->where('Players.skill', '>', '2000')
             ->groupBy(['weapon', 'Players.playerId'])
             ->orderBy('accuracy', 'desc')

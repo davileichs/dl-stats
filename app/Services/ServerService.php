@@ -9,13 +9,19 @@ use App\Models\ServerLoad;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class ServerService {
 
 
     protected static Server $server;
     protected static string $game;
+    private string $cacheExpire;
 
+
+    public function __construct(){
+        $this->cacheExpire = Carbon::now()->addHour();
+    }
 
     protected static function modelSimple(): Builder
     {
@@ -185,69 +191,94 @@ class ServerService {
 
     public function topTriggerPlayers()
     {
-        return $this->getTopFrom(['trigger', 'trigger_hh'])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom(['trigger', 'trigger_hh'])->get();
+        });
+        return $top;
     }
 
     public function topDefenderPlayers()
     {
-        return $this->getTopFrom([
-            'ze_defender_third', 'ze_defender_second', 'ze_defender_first',
-            'ze_defender_first_hh', 'ze_defender_second_hh', 'ze_defender_third_hh'
-        ])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom([
+                'ze_defender_third', 'ze_defender_second', 'ze_defender_first',
+                'ze_defender_first_hh', 'ze_defender_second_hh', 'ze_defender_third_hh'
+            ])->get();
+        });
+        return $top;
     }
 
     public function topWinnerExtremePlayers()
     {
-        return $this->getTopFrom(['event_win_4', 'ze_h_win_3_hh'])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            $this->getTopFrom(['event_win_4', 'ze_h_win_3_hh'])->get();
+        });
+        return $top;
     }
 
     public function topBossDamagePlayers()
     {
-        return $this->getTopFrom([
-            'ze_boss_damage_first', 'ze_boss_damage_second', 'ze_boss_damage_third',
-            'ze_boss_damage_first_hh', 'ze_boss_damage_second_hh', 'ze_boss_damage_third_hh'
-        ])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom([
+                'ze_boss_damage_first', 'ze_boss_damage_second', 'ze_boss_damage_third',
+                'ze_boss_damage_first_hh', 'ze_boss_damage_second_hh', 'ze_boss_damage_third_hh'
+            ])->get();
+        });
+        return $top;
     }
 
     public function topSoloPlayers()
     {
-        return $this->getTopFrom(['ze_h_win_solo', 'ze_h_win_solo_hh'])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom(['ze_h_win_solo', 'ze_h_win_solo_hh'])->get();
+        });
+        return $top;
     }
 
     public function topZombieDamagePlayers()
     {
-        return $this->getTopFrom(['ze_damage_zombie', 'ze_damage_zombie_hh'])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom(['ze_damage_zombie', 'ze_damage_zombie_hh'])->get();
+        });
+        return $top;
     }
 
     public function topMotherZombiePlayers()
     {
-        return $this->getTopFrom([
-            'ze_m_win_0','ze_m_kill_streak_12', 'ze_m_kill_streak_11', 'ze_m_kill_streak_10',
-            'ze_m_kill_streak_09', 'ze_m_kill_streak_08', 'ze_m_kill_streak_07', 'ze_m_kill_streak_06',
-            'ze_m_kill_streak_05', 'ze_m_kill_streak_04', 'ze_m_kill_streak_03', 'ze_m_kill_streak_02',
-            'ze_m_win_0_hh', 'ze_m_kill_streak_12_hh', 'ze_m_kill_streak_11_hh', 'ze_m_kill_streak_10_hh',
-            'ze_m_kill_streak_09_hh', 'ze_m_kill_streak_08_hh', 'ze_m_kill_streak_07_hh', 'ze_m_kill_streak_06_hh',
-            'ze_m_kill_streak_05_hh', 'ze_m_kill_streak_04_hh', 'ze_m_kill_streak_03_hh', 'ze_m_kill_streak_02_hh',
-        ])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom([
+                'ze_m_win_0','ze_m_kill_streak_12', 'ze_m_kill_streak_11', 'ze_m_kill_streak_10',
+                'ze_m_kill_streak_09', 'ze_m_kill_streak_08', 'ze_m_kill_streak_07', 'ze_m_kill_streak_06',
+                'ze_m_kill_streak_05', 'ze_m_kill_streak_04', 'ze_m_kill_streak_03', 'ze_m_kill_streak_02',
+                'ze_m_win_0_hh', 'ze_m_kill_streak_12_hh', 'ze_m_kill_streak_11_hh', 'ze_m_kill_streak_10_hh',
+                'ze_m_kill_streak_09_hh', 'ze_m_kill_streak_08_hh', 'ze_m_kill_streak_07_hh', 'ze_m_kill_streak_06_hh',
+                'ze_m_kill_streak_05_hh', 'ze_m_kill_streak_04_hh', 'ze_m_kill_streak_03_hh', 'ze_m_kill_streak_02_hh',
+            ])->get();
+        });
+        return $top;
     }
 
     public function topInfectorPlayers()
     {
-        return $this->getTopFrom([
-            'ze_infector_first', 'ze_infector_second', 'ze_infector_third',
-            'ze_infector_first_hh', 'ze_infector_second_hh', 'ze_infector_third_hh',
-        ])->get();
+        $top = Cache::remember('top', $this->cacheExpire, function() {
+            return $this->getTopFrom([
+                'ze_infector_first', 'ze_infector_second', 'ze_infector_third',
+                'ze_infector_first_hh', 'ze_infector_second_hh', 'ze_infector_third_hh',
+            ])->get();
+        });
+        return $top;
     }
 
     public static function mapUsage(?string $date = null): array
     {
-
         $server = self::$server;
         if(!$date) {
             $date = Carbon::now()->toDateString();
         }
 
-        $rows = $server->weaponsHits()
+        $cacheExpire = Carbon::now()->addMinutes(10);
+        $rows = Cache::remember('rows', $cacheExpire, function() use($server, $date) {
+            return $server->weaponsHits()
             ->select([
                 'Players.lastName as nickname',
                 'Players.playerId',
@@ -258,6 +289,8 @@ class ServerService {
             ->whereDate('eventTime', $date)
             ->orderBy('Events_Statsme.eventTime', 'asc')
             ->get();
+        });
+
 
         $list = array();
         $count = 1;

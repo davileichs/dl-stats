@@ -21,16 +21,17 @@
             </nav>
             <div class="tab-content pt-4">
                 <div class="tab-pane fade show active" id="nav-status" role="tabpanel" aria-labelledby="nav-status-tab">
-                    @include('pages.servers.stats-players-tab')
+                    <livewire:server.info :server="$server->get()" />
+                    <livewire:server.table-players :server="$server->get()" />
                 </div>
                 <div class="tab-pane fade" id="nav-topplayers" role="tabpanel" aria-labelledby="nav-topplayers-tab">
-                    @include('pages.servers.top-players-tab')
+                    <livewire:server.top-players :server="$server->get()" />
                 </div>
                 <div class="tab-pane fade" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
-                    @include('pages.servers.statistics-server-tab')
+                    <livewire:server.statistics :server="$server->get()" />
                 </div>
                 <div class="tab-pane fade" id="nav-session" role="tabpanel" aria-labelledby="nav-session-tab">
-                    @include('pages.servers.sessions-map-tab')
+                    <livewire:server.session :server="$server->get()" />
                 </div>
             </div>
           </div>

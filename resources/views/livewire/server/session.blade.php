@@ -12,7 +12,7 @@
                     <th>Damage</th>
                 </x-slot>
                 <x-slot:tbody>
-                    @foreach ($server->mapUsage() as $time=>$items)
+                    @foreach ($mapUsage as $time=>$items)
                         <tr class="table-primary text-center h5">
                             <td colspan="5">{{  $items['map'] . ' - session from ' . $time . ' to ' . $items['end_at'] }}</td>
                         </tr>
