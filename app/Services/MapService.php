@@ -267,7 +267,7 @@ class MapService {
             }
         }
 
-        return array_reverse($dates);
+        return ($dates);
     }
 
 
