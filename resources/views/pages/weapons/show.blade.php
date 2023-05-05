@@ -129,7 +129,7 @@
                     <canvas class="bg-white" id="shotsChart"></canvas>
                 </div>
                 <div class="col-md-6">
-                    <canvas class="bg-white" id="usageChart"></canvas>
+
                 </div>
             </div>
 
