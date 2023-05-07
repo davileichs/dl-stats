@@ -54,7 +54,8 @@ class MapService {
     public static function list(?string $search = null)
     {
         $maps = EventsEntry::select(['map', \DB::raw('count(id) as popularity')])
-        ->where('serverId', self::$server->serverId)->whereDate('eventTime', '>', Carbon::now()->subMonth()->toDateTime());
+                ->where('serverId', self::$server->serverId)
+                ->whereDate('eventTime', '>', Carbon::now()->subMonth()->toDateTime());
 
         if ($search) {
             $maps = $maps->search('map', $search);
@@ -237,6 +238,99 @@ class MapService {
                 $key['total_time'] = time2string($finishTime->diffInSeconds($startTime), ['h', 'm']);
         }
        return (array_reverse($list));
+    }
+
+    public static function playersOnMap(mixed $model = null, ?string $date = null): array
+    {
+        if(!$model) {
+            $model = self::$map;
+        }
+        if(!$date) {
+            $date = Carbon::now()->toDateString();
+        }
+
+        $rows = $model->playerActions()
+            ->select([
+                'Players.lastName as nickname',
+                'Players.playerId',
+                'Events_PlayerActions.*',
+                'Actions.code'
+            ])
+            ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
+            ->join('Actions', 'Actions.id', 'Events_PlayerActions.actionId')
+            ->where('hideRanking', 0)
+            ->whereDate('eventTime', $date)
+            ->orderBy('Events_PlayerActions.eventTime', 'asc')
+            ->get();
+
+        $list = array();
+
+        foreach($rows as $k=>$row) {
+
+            if($k == 0 || strcmp($rows[($k-1)]->map, $row->map) !== 0) {
+                if($k==0) {
+                    $newKey = substr($row->eventTime, -8, 5);
+                    $date_start = $row->eventTime;
+                } else {
+                    $newKey = substr($rows[($k-1)]->eventTime, -8, 5);
+                    $date_start = $row->eventTime;
+                }
+
+                $list[$newKey] = ['map' => $row->map, 'players' => array(), 'end_at' => null, 'date_start' => $date_start, 'date_end' => null];
+            } else {
+                $list[$newKey]['end_at'] = substr($row->eventTime, -8, 5);
+                $list[$newKey]['date_end'] = $row->eventTime;
+            }
+
+            $wins[$newKey][$row->playerId][] = self::checkWinningMap($row->code);
+            if(empty($list[$newKey]['players'][$row->playerId])) {
+                $list[$newKey]['players'][$row->playerId] = (object)([
+                    'playerId'  => $row->playerId,
+                    'nickname'  => $row->nickname ?? '',
+                    'points'    => $row->bonus
+                ]);
+            } else {
+                $list[$newKey]['players'][$row->playerId]->points += $row->bonus;
+            }
+
+        }
+        $list = array_reverse($list);
+        foreach($list as $k => &$value) {
+            foreach($value['players'] as $id=>$player) {
+                $player->mapwin = implode(' | ', array_filter( array_unique($wins[$k][$id]) ) );
+            }
+            $value['players'] =  Collection::make($value['players'])->sortByDesc('points');
+            $startTime = Carbon::parse($value['date_start']);
+            $finishTime = Carbon::parse($value['date_end']);
+            $value['total_time'] = time2string($finishTime->diffInSeconds($startTime), ['h', 'm']);
+        }
+
+       return $list;
+    }
+
+    protected static function checkWinningMap($code) {
+
+        switch($code) {
+            case 'ze_h_win_0':
+            case 'ze_h_win_0_hh':
+            case 'event_win_1':
+                return 'EASY';
+            case 'ze_h_win_1':
+            case 'ze_h_win_1_hh':
+            case 'event_win_2':
+                return 'NORMAL';
+            case 'ze_h_win_2':
+            case 'ze_h_win_2_hh':
+            case 'event_win_3':
+                return 'HARD';
+            case 'ze_h_win_3':
+            case 'ze_h_win_3_hh':
+            case 'event_win_4':
+                return 'EXTREME';
+            default:
+            return null;
+        }
+
     }
 
     public function playTime(): array

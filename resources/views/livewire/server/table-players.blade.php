@@ -8,8 +8,7 @@
             <table class="table table-striped m-0">
                 <thead class="table-dark g-0 p-0">
                     <td>Player</td>
-                    <td>Points</td>
-                    <td>kills | Deaths</td>
+                    <td>Points Earned</td>
                     <td>Time online</td>
                 </thead>
                 <tbody>
@@ -17,7 +16,6 @@
                         <tr class="table-{{ $class }}">
                             <td><a href="{{ route('player.show', $player->player_id) }}" class="link-dark text-decoration-none">{{ $player->name }}</a></td>
                             <td>{{ $player->skill_change }}</td>
-                            <td>{{ $player->kills }} | {{ $player->deaths }}</td>
                             <td class="small">{{ $player->time }}</td>
                         </tr>
                     @endforeach

@@ -210,10 +210,14 @@ class ServerService {
 
     public function topWinnerPlayers()
     {
-        $topWinner = Cache::remember('topWinner', $this->cacheExpire, function() {
-            $this->getTopFrom(['event_win_4', 'ze_h_win_3_hh','event_win_3', 'ze_h_win_2_hh','event_win_2', 'ze_h_win_1_hh'])->get();
+        $topWin = Cache::remember('topWin', $this->cacheExpire, function() {
+            return $this->getTopFrom([
+                'event_win_4','event_win_3', 'event_win_2', 'event_win_1',
+                'ze_h_win_3','ze_h_win_2', 'ze_h_win_1', 'ze_h_win_0',
+                'ze_h_win_3_hh','ze_h_win_2_hh', 'ze_h_win_1_hh', 'ze_h_win_0_hh',
+            ])->get();
         });
-        return $topWinner;
+        return $topWin;
     }
 
     public function topBossDamagePlayers()
@@ -271,7 +275,12 @@ class ServerService {
 
     public static function mapUsage(?string $date = null): array
     {
-        return MapService::mapUsage(self::$server);
+        return MapService::mapUsage(self::$server, $date);
+    }
+
+    public static function playersOnMap(?string $date = null): array
+    {
+        return MapService::playersOnMap(self::$server, $date);
     }
 
     public function players()

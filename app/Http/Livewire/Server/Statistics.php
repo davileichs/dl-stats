@@ -10,13 +10,14 @@ class Statistics extends Component
 
     public $server;
 
+
     public function render()
     {
         return view('livewire.server.statistics', [
-            'statisticsDay'   => ServerService::find($this->server)->statisticsDay(),
-            'statisticsWeek'   => ServerService::find($this->server)->statisticsWeek(),
+            'statisticsDay'     => ServerService::find($this->server)->statisticsDay(),
+            'statisticsWeek'    => ServerService::find($this->server)->statisticsWeek(),
             'statisticsMonth'   => ServerService::find($this->server)->statisticsMonth(),
-            'statisticsYear'   => ServerService::find($this->server)->statisticsYear(),
+            'statisticsYear'    => ServerService::find($this->server)->statisticsYear(),
         ]);
     }
 }

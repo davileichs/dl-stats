@@ -73,6 +73,16 @@ class Server extends Model
         return $this->hasMany(PlayerWeaponShot::class, 'serverId', 'serverId');
     }
 
+    public function entries(): hasMany
+    {
+        return $this->hasMany(EventsEntry::class, 'serverId', 'serverId');
+    }
+
+    public function playerActions(): hasMany
+    {
+        return $this->hasMany(PlayerAction::class, 'serverId', 'serverId');
+    }
+
     protected function actPlayers(): Attribute
     {
         return Attribute::make(

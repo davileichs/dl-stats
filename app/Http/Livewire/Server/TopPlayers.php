@@ -9,18 +9,25 @@ class TopPlayers extends Component
 {
 
     public $server;
+    public $readyToLoad = false;
+
+
+    public function loadTopPlayers()
+    {
+        $this->readyToLoad = true;
+    }
 
     public function render()
     {
         return view('livewire.server.top-players', [
-            'topTriggerPlayers'   => ServerService::find($this->server)->topTriggerPlayers(),
-            'topDefenderPlayers'   => ServerService::find($this->server)->topDefenderPlayers(),
-            'topWinnerPlayers'   => ServerService::find($this->server)->topWinnerPlayers(),
-            'topBossDamagePlayers'   => ServerService::find($this->server)->topBossDamagePlayers(),
-            'topSoloPlayers'   => ServerService::find($this->server)->topSoloPlayers(),
-            'topZombieDamagePlayers'   => ServerService::find($this->server)->topZombieDamagePlayers(),
-            'topMotherZombiePlayers'   => ServerService::find($this->server)->topMotherZombiePlayers(),
-            'topInfectorPlayers'   => ServerService::find($this->server)->topInfectorPlayers()
+            'topTriggerPlayers'         => $this->readyToLoad ? ServerService::find($this->server)->topTriggerPlayers() : [],
+            'topDefenderPlayers'        => $this->readyToLoad ? ServerService::find($this->server)->topDefenderPlayers() : [],
+            'topWinnerPlayers'          => $this->readyToLoad ? ServerService::find($this->server)->topWinnerPlayers() : [],
+            'topBossDamagePlayers'      => $this->readyToLoad ? ServerService::find($this->server)->topBossDamagePlayers() : [],
+            'topSoloPlayers'            => $this->readyToLoad ? ServerService::find($this->server)->topSoloPlayers() : [],
+            'topZombieDamagePlayers'    => $this->readyToLoad ? ServerService::find($this->server)->topZombieDamagePlayers() : [],
+            'topMotherZombiePlayers'    => $this->readyToLoad ? ServerService::find($this->server)->topMotherZombiePlayers() : [],
+            'topInfectorPlayers'        => $this->readyToLoad ? ServerService::find($this->server)->topInfectorPlayers() : []
         ]);
     }
 }

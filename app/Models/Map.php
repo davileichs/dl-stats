@@ -55,9 +55,9 @@ class Map extends Model
         return $this->hasMany(EventsEntry::class, 'map', 'map');
     }
 
-    // public function getPopularityAttribute(): int
-    // {
-    //     return $this->entries()->count();
-    // }
+    public function playerActions(): hasMany
+    {
+        return $this->hasMany(PlayerAction::class, 'map', 'map');
+    }
 
 }

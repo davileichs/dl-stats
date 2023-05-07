@@ -1,6 +1,6 @@
-<div>
-    <div class="row">
-
+<div wire:init="loadTopPlayers">
+    <div class="text-center h5" wire:loading>Loading</div>
+    <div class="row" wire:loading.remove>
         <div class="col-md-4">
             <x-top-block :topPlayers="$topTriggerPlayers">
                 <x-slot:title>
@@ -20,7 +20,7 @@
         <div class="col-md-4">
             <x-top-block :topPlayers="$topWinnerPlayers">
                 <x-slot:title>
-                    TOP Winner in Extreme
+                    TOP Winners
                 </x-slot>
             </x-top-block>
         </div>

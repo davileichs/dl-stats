@@ -93,6 +93,16 @@ class Player extends Model
         return $this->hasOne(PlayerSteam::class, 'playerId', 'playerId');
     }
 
+    public function playerActions(): hasMany
+    {
+        return $this->hasMany(PlayerAction::class, 'playerId', 'playerId');
+    }
+
+    public function entries(): hasMany
+    {
+        return $this->hasMany(EventsEntry::class, 'playerId', 'playerId');
+    }
+
     protected function skill(): Attribute
     {
         return Attribute::make(
