@@ -6,8 +6,14 @@
                 <h1>{{ $title }}</h1>
             </div>
             @endisset
-            @isset($head) {{ $head }} @endisset
-            @isset($body) {{ $body }} @endisset
+            <div class="row">
+                <div class="col-12">
+                    @isset($head) {{ $head }} @endisset
+                </div>
+                <div class="col-12">
+                     @isset($body) {{ $body }} @endisset
+                </div>
+            </div>
         </div>
     </div>
 </div>

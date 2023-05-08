@@ -1,7 +1,7 @@
 <div wire:init="loadTopPlayers">
     <div class="text-center h5" wire:loading>Loading</div>
     <div class="row" wire:loading.remove>
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topTriggerPlayers">
                 <x-slot:title>
                     TOP Trigger
@@ -9,7 +9,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topDefenderPlayers">
                 <x-slot:title>
                     TOP Defender
@@ -17,7 +17,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topWinnerPlayers">
                 <x-slot:title>
                     TOP Map Winners
@@ -25,7 +25,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topBossDamagePlayers">
                 <x-slot:title>
                     TOP Boss Damage
@@ -33,7 +33,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topSoloPlayers">
                 <x-slot:title>
                     TOP Solo
@@ -41,7 +41,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topZombieDamagePlayers">
                 <x-slot:title>
                     TOP Zombie Damage
@@ -49,7 +49,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topMotherZombiePlayers" color="danger">
                 <x-slot:title>
                     TOP Mother Zombie
@@ -57,7 +57,7 @@
             </x-top-block>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <x-top-block :topPlayers="$topInfectorPlayers" color="danger">
                 <x-slot:title>
                     TOP Infector

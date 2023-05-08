@@ -9,14 +9,16 @@
     </div>
     @endif
     <div class="row">
-        <table class="table table-striped mt-2">
-            <thead class="table-dark">
-                {{ $thead }}
-            </thead>
-            <tbody>
-                {{ $tbody }}
-            </tbody>
-        </table>
+        <div class="col-md-12 table-responsive">
+            <table class="table table-striped mt-2">
+                <thead class="table-dark">
+                    {{ $thead }}
+                </thead>
+                <tbody>
+                    {{ $tbody }}
+                </tbody>
+            </table>
+        </div>
     </div>
     @isset($pagination)
     <div class="row text-right">
