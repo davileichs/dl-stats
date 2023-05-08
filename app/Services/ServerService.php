@@ -99,11 +99,17 @@ class ServerService {
         return $teams;
     }
 
-    public function statisticsDay(string $day = '') {
-        $periodTimestamp = Carbon::now()->subDay()->timestamp;
+    public function statisticsDay(?string $day = null) {
+        if($day) {
+            $periodTimestamp = Carbon::createFromDate($day)->subDay()->timestamp;
+            $timestampEnd = Carbon::createFromDate($day)->timestamp;
+        } else {
+            $periodTimestamp = Carbon::now()->subDay()->timestamp;
+            $timestampEnd = Carbon::now()->timestamp;
+        }
         $reduce = 1;
 
-        return $this->getServerLoad($periodTimestamp, $reduce);
+        return $this->getServerLoad($periodTimestamp, $reduce, $timestampEnd);
     }
 
     public function statisticsWeek(string $week = '') {
@@ -130,7 +136,9 @@ class ServerService {
 
     protected function getServerLoad(?int $timestampInit = null, ?int $reduce = 1, ?int $timestampEnd = null): array
     {
-        $timestampEnd = Carbon::now()->timestamp;
+        if(!$timestampEnd) {
+            $timestampEnd = Carbon::now()->timestamp;
+        }
 
         $conn = config('database.active_stats');
         $loads = \DB::connection($conn)->select("
@@ -144,6 +152,10 @@ class ServerService {
 
         $stats = [];
         $act_players = 0;
+
+        if($reduce >= 5) {
+            $reduce = $reduce * 10;
+        }
 
         foreach($loads as $k=>$load) {
             $day = Carbon::createFromTimestamp($load->timestamp)->format('d-m');

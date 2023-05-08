@@ -20,7 +20,7 @@
         <div class="col-md-4">
             <x-top-block :topPlayers="$topWinnerPlayers">
                 <x-slot:title>
-                    TOP Winners
+                    TOP Map Winners
                 </x-slot>
             </x-top-block>
         </div>

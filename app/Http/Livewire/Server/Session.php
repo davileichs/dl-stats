@@ -12,7 +12,7 @@ class Session extends Component
     public $server;
     public $date;
     public $mapUsage;
-    protected $listeners = ['selectDay'];
+    protected $listeners = ['selectSession'];
     public $readyToLoad = false;
 
     public function mount()
@@ -20,10 +20,9 @@ class Session extends Component
         $this->date = Carbon::now()->format('d-m-Y');
     }
 
-    public function selectDay($date)
+    public function selectSession($date)
     {
         $this->date = $date;
-
     }
 
     public function loadSession()

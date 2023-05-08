@@ -1,13 +1,9 @@
 <div>
     <div class="text-center h5" wire:loading>Loading</div>
     <div wire:loading.remove>
-        <x-chart-server type='line' period="lastDay" :stats="$statisticsDay">
-            <x-slot:title>
-                Last Day
-            </x-slot>
-            <x-slot:body>
-            </x-slot>
-        </x-chart-server>
+
+        <livewire:server.statistics-day :server="$server" />
+
         <x-chart-server period="lastWeek" :stats="$statisticsWeek">
             <x-slot:title>
                 last Week
@@ -31,3 +27,19 @@
         </x-chart-server>
     </div>
 </div>
+@section('scripts')
+@parent
+<script>
+    $( function() {
+        $( "#dayDatePicker" ).datepicker({
+            maxDate: new Date(),
+            dateFormat: 'dd-mm-yy'
+        });
+
+        $('#dayDatePicker').change(function() {
+            Livewire.emit('selectDay', this.value)
+        })
+
+    });
+</script>
+@endsection

@@ -1,8 +1,8 @@
 <div wire:init="loadSession">
     <div class="row justify-content-center">
-    <div class="col-md-2 text-left align-self-center">
-        <label for="datepicker" class="form-label">Date</label>
-        <input class="form-control text-center" placeholder="{{ $date }}" name="datepicker" type="text" id="datepicker" wire:bind autocomplete="off">
+        <div class="col-md-2 text-left align-self-center">
+            <label for="datepicker" class="form-label">Date</label>
+            <input class="form-control text-center" placeholder="{{ $date }}" name="datepicker" type="text" id="datepicker" wire:bind autocomplete="off">
       </div>
     </div>
     <x-card>
@@ -41,13 +41,8 @@
 </div>
 
 </div>
-@section('styles')
-<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-@endsection
 @section('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+@parent
 <script>
     $( function() {
         $( "#datepicker" ).datepicker({
@@ -56,7 +51,7 @@
         });
 
         $('#datepicker').change(function() {
-            Livewire.emit('selectDay', this.value)
+            Livewire.emit('selectSession', this.value)
         })
 
     });
