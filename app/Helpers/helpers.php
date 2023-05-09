@@ -6,7 +6,7 @@
  * @return response()
  */
 if (! function_exists('time2string')) {
-    function time2string(string $time, array $fields =['d','h', 'm', 's']): string
+    function time2string(string $time, array $fields =['d','h', 'm', 's'], bool $onlyNumbers = false): string
     {
         $d = floor($time/86400);
         $d = str_pad($d, 2, '0', STR_PAD_LEFT);
@@ -22,7 +22,7 @@ if (! function_exists('time2string')) {
 
         $time_str = '';
         foreach($fields as $field) {
-            $time_str .= $$field . ''.$field .' ' ;
+            $time_str .= $$field . (!$onlyNumbers ? ''. $field .' ' : '') ;
         }
 
         return $time_str;
@@ -40,6 +40,16 @@ if (! function_exists('timeago2string')) {
             'join' => true, // join with natural syntax as per current locale
         ]));
 
+    }
+}
+
+if (! function_exists('minutesToHours')) {
+    function minutesToHours(string $time): string
+    {
+        $h = round($time/3600, 2);
+        $h = str_pad($h, 2, '0', STR_PAD_LEFT);
+
+       return $h;
     }
 }
 

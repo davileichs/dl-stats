@@ -18,8 +18,8 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropPlayerName">
                                         <li class="mx-3 my-1 text-secondary">Played also as</li>
-                                        @foreach($player->alsoAsName() as $name)
-                                        <li class="mx-3 my-1">{{ $name }}</li>
+                                        @foreach($player->alsoAsName() as $time => $name)
+                                        <li class="mx-3 my-1">{{ $time }}{{ $name }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
@@ -42,144 +42,27 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="container text-left py-5">
-                <x-card>
-                    <x-slot:title>
-                        Session
-                    </x-slot>
-                        <canvas class="bg-white" id="sessionChart"></canvas>
-                </x-card>
+                <livewire:player.table-points :playerId="$player->get('playerId')" />
 
-                <x-card>
-                    <x-slot:title>
-                        Points
-                    </x-slot>
-                        <nav>
-                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                <button class="nav-link link-dark active" id="nav-statistics-tab" data-bs-toggle="tab" data-bs-target="#nav-statistics" type="button" role="tab" aria-controls="nav-statistics" aria-selected="true">Statistics</button>
-                                <button class="nav-link link-dark" id="nav-data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="false">Points table</button>
-                            </div>
-                        </nav>
-                        <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade show active pt-4" id="nav-statistics" role="tabpanel" aria-labelledby="nav-statistics-tab">
-                                <h5 class="card-title mt-4">Points earned</h5>
-                                <p class="card-text">
-                                    <div class="progress">
-                                        @foreach($player->rewards() as $team=>$reward)
-                                        <div class="progress-bar progress-bar-striped @if($team == 'human') bg-primary @elseif($team == 'zombie') bg-danger @else bg-secondary @endif" role="progressbar" style="width: {{ $reward['percent'] }}%" aria-valuenow="{{ $reward['percent'] }}" aria-valuemin="0" aria-valuemax="100">{{ $reward['points'] }} - {{ ucfirst($team) }}</div>
-                                        @endforeach
-                                    </div>
-                                </p>
-                            </div>
-                            <div class="tab-pane fade" id="nav-data" role="tabpanel" aria-labelledby="nav-data-tab">
-                                <x-table search="hide">
-                                    <x-slot:thead>
-                                        <th scope="col">#</th>
-                                            <th scope="col">Action</th>
-                                            <th scope="col">Team</th>
-                                            <th scope="col">Accumulated Points</th>
-                                    </x-slot>
-                                    <x-slot:tbody>
-                                        @foreach ($player->listActions() as $k=>$action)
-                                        <tr>
-                                            <tr class="@if ($action->team == 'ZOMBIE') table-danger @elseif ($action->team == 'HUMAN') table-primary @else table-secondary @endif ">
-                                                <td>{{ $k+1 }}</td>
-                                                <td>{{ $action->description }}</td>
-                                                <td>{{ $action->team }}</td>
-                                                <td> {{ $action->points }}</td>
-                                                </tr>
-                                            </tr>
-                                        @endforeach
-                                    </x-slot>
-                                    <x-slot:pagination>
+                <livewire:player.table-weapons :playerId="$player->get('playerId')" />
 
-                                    </x-slot>
-                                </x-table>
-                            </div>
-                        </div>
-                </x-card>
-
-                <x-card>
-                    <x-slot:title>
-                        Weapons
-                    </x-slot>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-table search="hide">
-                                    <x-slot:thead>
-                                        <th>Rank</th>
-                                        <th>Weapon</th>
-                                        <th>Shots</th>
-                                        <th>Hits</th>
-                                        <th>Damage</th>
-                                        <th>Accuracy</th>
-                                    </x-slot>
-                                    <x-slot:tbody>
-                                        @foreach ($player->listWeaponsHits() as $k=>$weapon)
-                                        <tr>
-                                            <td>{{ $k+1 }}</td>
-                                            <td><a href="{{ route('weapon.show', [$server->get()->game, $weapon->weapon]) }}" class="link-secondary"><img src="/images/weapons/{{ $weapon->weapon }}.png" width="110" height="30"></a></td>
-                                            <td>{{ number_format($weapon->shots) }}</td>
-                                            <td>{{ number_format($weapon->hits) }}</td>
-                                            <td>{{ number_format($weapon->damage) }}</td>
-                                            <td>{{ $weapon->accuracy }}%</td>
-                                            </tr>
-                                        @endforeach
-                                    </x-slot>
-                                    <x-slot:pagination>
-                                    </x-slot>
-                                </x-table>
-                            </div>
-                            <div class="col-md-6 pt-5">
-                                    <p class="card-text">
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ percent($player->get()->hits, $player->get()->shots) }}%" aria-valuenow="{{ percent($player->get()->hits, $player->get()->shots) }}" aria-valuemin="0" aria-valuemax="100">{{ percent($player->get()->hits, $player->get()->shots) }}% - Hits</div>
-                                            <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ percent_inverse($player->get()->hits, $player->get()->shots) }}%" aria-valuenow="{{ percent_inverse($player->get()->hits, $player->get()->shots) }}" aria-valuemin="0" aria-valuemax="100">{{ percent_inverse($player->get()->hits, $player->get()->shots) }}% - Miss</div>
-                                        </div>
-                                    </p>
-                                <canvas class="bg-white" id="shotsChart" ></canvas>
-                            </div>
-                        </div>
-                </x-card>
-
-                <x-card>
-                    <x-slot:title>
-                        Maps
-                    </x-slot>
-
-                    <a class="link-dark" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        Show
-                    </a>
-                    <div class="collapse" id="collapseExample">
-                            <x-table search="hide">
-                                <x-slot:thead>
-                                    <th>Map</th>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                </x-slot>
-                                <x-slot:tbody>
-                                    @foreach ($player->listMaps() as $k=>$map)
-                                        <tr class="@isset ($map['ipAddress']) table-primary @else table-danger @endisset ">
-                                            <td>{{ $map['map'] }}</td>
-                                            <td>{{ $map['eventTime'] }}</td>
-                                            <td>@isset ($map['ipAddress']) Connect @else Disconnect @endisset</td>
-                                        </tr>
-                                    @endforeach
-
-                                </x-slot>
-                                <x-slot:pagination>
-                                </x-slot>
-                            </x-table>
-                      </div>
-                </x-card>
+                <livewire:player.table-maps :playerId="$player->get('playerId')" />
             </div>
     </x-slot>
 
 </x-container>
 @endsection
+@section('styles')
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+@endsection
 @section('scripts')
+@parent
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+
 <script>
     (async function() {
 

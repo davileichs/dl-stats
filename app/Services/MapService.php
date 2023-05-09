@@ -240,31 +240,9 @@ class MapService {
        return (array_reverse($list));
     }
 
-    public static function playersOnMap(mixed $model = null, ?string $date = null): array
+    public static function playersOnMap(mixed $rows, bool $continuous = true): array
     {
-        if(!$model) {
-            $model = self::$map;
-        }
-        if(!$date) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        $rows = $model->playerActions()
-            ->select([
-                'Players.lastName as nickname',
-                'Players.playerId',
-                'Events_PlayerActions.*',
-                'Actions.code'
-            ])
-            ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
-            ->join('Actions', 'Actions.id', 'Events_PlayerActions.actionId')
-            ->where('hideRanking', 0)
-            ->whereDate('eventTime', $date)
-            ->orderBy('Events_PlayerActions.eventTime', 'asc')
-            ->get();
-
         $list = array();
-
         foreach($rows as $k=>$row) {
 
             if($k == 0 || strcmp($rows[($k-1)]->map, $row->map) !== 0) {
@@ -272,11 +250,14 @@ class MapService {
                     $newKey = substr($row->eventTime, -8, 5);
                     $date_start = $row->eventTime;
                 } else {
-                    $newKey = substr($rows[($k-1)]->eventTime, -8, 5);
+                    if($continuous) {
+                        $newKey = substr($rows[($k-1)]->eventTime, -8, 5);
+                    } else {
+                        $newKey = substr($row->eventTime, -8, 5);
+                    }
                     $date_start = $row->eventTime;
                 }
-
-                $list[$newKey] = ['map' => $row->map, 'players' => array(), 'end_at' => null, 'date_start' => $date_start, 'date_end' => null];
+                $list[$newKey] = ['map' => $row->map, 'players' => array(), 'end_at' => substr($row->eventTime, -8, 5), 'date_start' => $date_start, 'date_end' => $row->eventTime];
             } else {
                 $list[$newKey]['end_at'] = substr($row->eventTime, -8, 5);
                 $list[$newKey]['date_end'] = $row->eventTime;
@@ -302,7 +283,13 @@ class MapService {
             $value['players'] =  Collection::make($value['players'])->sortByDesc('points');
             $startTime = Carbon::parse($value['date_start']);
             $finishTime = Carbon::parse($value['date_end']);
-            $value['total_time'] = time2string($finishTime->diffInSeconds($startTime), ['h', 'm']);
+            $diff = $finishTime->diffInSeconds($startTime);
+            if ($diff == 0) {
+                $value['total_time'] = 'AFK';
+            } else {
+                $value['total_time'] = time2string($diff, ['h', 'm']);
+            }
+
         }
 
        return $list;

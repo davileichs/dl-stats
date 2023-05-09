@@ -292,7 +292,24 @@ class ServerService {
 
     public static function playersOnMap(?string $date = null): array
     {
-        return MapService::playersOnMap(self::$server, $date);
+        if(!$date) {
+            $date = Carbon::now()->toDateString();
+        }
+        $rows = self::$server->playerActions()
+            ->select([
+                'Players.lastName as nickname',
+                'Players.playerId',
+                'Events_PlayerActions.*',
+                'Actions.code'
+            ])
+            ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
+            ->join('Actions', 'Actions.id', 'Events_PlayerActions.actionId')
+            ->where('hideRanking', 0)
+            ->whereDate('eventTime', $date)
+            ->orderBy('Events_PlayerActions.eventTime', 'asc')
+            ->get();
+
+        return MapService::playersOnMap($rows);
     }
 
     public function players()

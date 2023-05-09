@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Models\Action;
 use App\Models\Player;
+use App\Models\PlayerHistory;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -76,9 +77,8 @@ class PlayerService {
     public static function alsoAsName(): array
     {
         $player = self::get();
-        $names = $player->names()->where('name', '!=', $player->nickname)->where('connection_time', ">", 60);
-
-        return $names->pluck('name')->toArray();
+        $names = $player->names()->where('name', '!=', $player->nickname)->where('connection_time', ">", 1000);
+        return $names->pluck('connection_time','name')->toArray();
     }
 
     public static function server()
@@ -93,6 +93,20 @@ class PlayerService {
         $sessions = $player->sessions()->orderBy('eventTime', 'asc')->get();
         $array_sessions = $sessions->pluck('skill_change','eventTime')->toArray();
 
+        return self::orderSessionArray($array_sessions);
+    }
+
+    public static function sessionConnections(): array
+    {
+        $player = self::get();
+        $sessions = $player->sessions()->select(['eventTime', \DB::raw(' round(connection_time/60) as connection_time')])->orderBy('eventTime', 'asc')->get();
+        $array_sessions = $sessions->pluck('connection_time','eventTime')->toArray();
+
+        return self::orderSessionArray($array_sessions);
+    }
+
+    protected static function orderSessionArray(array $array_sessions)
+    {
         $newKeysArray = [];
         foreach($array_sessions as $key => $session) {
             $newKey = substr($key,-5);
@@ -102,23 +116,6 @@ class PlayerService {
         }
         return $newKeysArray;
     }
-
-    public static function sessionConnections(): array
-    {
-        $player = self::get();
-        $sessions = $player->sessions()->orderBy('eventTime', 'asc')->get();
-        $array_sessions = $sessions->pluck('connection_time','eventTime')->toArray();
-
-        $newKeysArray = [];
-        foreach($array_sessions as $key => $session) {
-            $newKey = substr($key,-5);
-            $inverse = explode('-', $newKey);
-            $newOrder = implode('-', array_reverse($inverse));
-            $newKeysArray[$newOrder] = ceil($session/60);
-        }
-        return $newKeysArray;
-    }
-
 
     public static function ranking()
     {
@@ -237,6 +234,44 @@ class PlayerService {
     {
         $player = self::get();
         return $player->livestats()->exists();
+    }
+
+    public static function history(string $game): array
+    {
+        $history = PlayerHistory::select([
+            'eventTime',
+            \DB::raw('round(SUM(connection_time)/60) as connection_time')
+        ])
+        ->where('game', $game)
+        ->groupBy('eventTime')
+        ->orderby('eventTime', 'asc')
+        ->get();
+
+        $array_sessions = $history->pluck('connection_time','eventTime')->toArray();
+
+        return self::orderSessionArray($array_sessions);
+    }
+
+    public static function mapsPlayed(?string $date = null): array
+    {
+        if(!$date) {
+            $date = Carbon::now()->toDateString();
+        }
+        $rows = self::$player->playerActions()
+            ->select([
+                'Players.lastName as nickname',
+                'Players.playerId',
+                'Events_PlayerActions.*',
+                'Actions.code'
+            ])
+            ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
+            ->join('Actions', 'Actions.id', 'Events_PlayerActions.actionId')
+            ->where('hideRanking', 0)
+            ->whereDate('eventTime', $date)
+            ->orderBy('Events_PlayerActions.eventTime', 'asc')
+            ->get();
+
+        return MapService::playersOnMap($rows, false);
     }
 
 
