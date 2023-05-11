@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Models\Action;
 use App\Models\Player;
 use App\Models\PlayerHistory;
+use Cache;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -81,6 +82,30 @@ class PlayerService {
         return $names->pluck('connection_time','name')->toArray();
     }
 
+    public function playerRaceTime()
+    {
+        $steamId = self::$player->steam()->first()->uniqueId;
+        $request = \Http::get('https://racebackend.unloze.com/racetimer_endpoints-1.0/api/timers/player/STEAM_0:'.$steamId);
+        return $request->json();
+    }
+
+    public function mapsRaceTime()
+    {
+        $steamId = self::$player->steam()->first()->uniqueId;
+        $maps = new Collection();
+        $page = 0;
+        do {
+            $request = \Http::get('https://racebackend.unloze.com/racetimer_endpoints-1.0/api/timers/player/maps/STEAM_0:'.$steamId.'/'.$page);
+
+            $response = $request->json();
+            $maps = $maps->merge($response);
+
+            $page++;
+        } while(count($response) == 36);
+
+        return $maps->unique()->sortBy('position')->take(100);
+    }
+
     public static function server()
     {
         $player = self::get();
@@ -115,15 +140,6 @@ class PlayerService {
             $newKeysArray[$newOrder] = $session;
         }
         return $newKeysArray;
-    }
-
-    public static function ranking()
-    {
-        $player = self::get();
-        return Player::select('playerId')
-            ->whereRaw("skill > (SELECT skill FROM hlstats_Players WHERE playerId=? and game like ? LIMIT 1)",[$player->playerId, $player->game])
-            ->where('game','LIKE',$player->game)
-            ->count()+1;
     }
 
     public static function rewards(): array

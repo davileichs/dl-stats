@@ -141,9 +141,18 @@ class Player extends Model
         return getSteamAvatar($this->steam_id);
     }
 
-    public function getNicknameAttribute()
+    public function getNicknameAttribute(): string
     {
         return $this->lastName;
+    }
+
+    public function getRankingAttribute(): string
+    {
+        return $this->select('playerId')
+            ->whereRaw("skill > (SELECT skill FROM hlstats_Players WHERE playerId=? and game like ? LIMIT 1)",
+                [$this->playerId, $this->game])
+            ->where('game','LIKE',$this->game)
+            ->count()+1;
     }
 
 }

@@ -21,8 +21,8 @@ class TablePoints extends Component
     public function render()
     {
         return view('livewire.player.table-points', [
-            'rewards'       => $this->readyToLoad ? PlayerService::find($this->playerId)->rewards() : [],
-            'listActions'   => $this->readyToLoad ? PlayerService::find($this->playerId)->listActions() : []
+            'rewards'           => $this->readyToLoad ? PlayerService::find($this->playerId)->rewards() : [],
+            'listActions'       => $this->readyToLoad ? PlayerService::find($this->playerId)->listActions() : []
         ]);
     }
 }

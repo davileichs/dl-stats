@@ -10,10 +10,12 @@
         <x-slot:title>
             Points
         </x-slot>
+
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link link-dark active" id="nav-statistics-tab" data-bs-toggle="tab" data-bs-target="#nav-statistics" type="button" role="tab" aria-controls="nav-statistics" aria-selected="true">Statistics</button>
                     <button class="nav-link link-dark" id="nav-data-tab" data-bs-toggle="tab" data-bs-target="#nav-data" type="button" role="tab" aria-controls="nav-data" aria-selected="false">Points table</button>
+                    <button class="nav-link link-dark" id="nav-racetime-tab" data-bs-toggle="tab" data-bs-target="#nav-racetime" type="button" role="tab" aria-controls="nav-racetime" aria-selected="false">Racetime</button>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -52,6 +54,10 @@
                         </x-slot>
                     </x-table>
                 </div>
+                <div class="tab-pane fade" id="nav-racetime" role="tabpanel" aria-labelledby="nav-racetime-tab"  wire:loading.remove>
+                    <livewire:player.table-racetime :playerId="$playerId" />
+                </div>
+
             </div>
     </x-card>
 </div>
