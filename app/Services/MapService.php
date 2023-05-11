@@ -114,6 +114,28 @@ class MapService {
         return ServerService::find($map->servers()->first());
     }
 
+    public function playersRaceTime()
+    {
+        $map = strtolower(self::$map->map);
+        $times = new Collection();
+        $page = 0;
+        do {
+            $request = \Http::get('https://racebackend.unloze.com/racetimer_endpoints-1.0/api/timers/map/'.$map.'/1/'.$page);
+
+            $response = $request->json();
+            $times = $times->merge($response);
+
+            if($request->status() != '200') {
+                return [];
+            }
+
+            $page++;
+        } while(count($response) >= 20 && $page < 8);
+
+
+        return $times->unique()->sortby('position')->take(100);
+    }
+
     public static function topShootPlayers(int $top = 10): Collection
     {
         $map = self::$map;

@@ -69,6 +69,14 @@
 
             <div class="row">
                 <div class="col-md-12">
+                    <x-card>
+                        <x-slot:title>
+                            Racetime
+                        </x-slot>
+                        <livewire:map.table-racetime :mapId="$map->get()->rowId" />
+                    </x-card>
+                </div>
+                <div class="col-md-12">
                     <canvas class="bg-white" id="entriesChart"></canvas>
                 </div>
             </div>
