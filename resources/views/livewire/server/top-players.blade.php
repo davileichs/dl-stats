@@ -65,6 +65,14 @@
             </x-top-block>
         </div>
 
+        <div class="col-md-6 col-lg-4">
+            <x-top-block :topPlayers="$topInSuicidePlayers" color="danger" column="suicides">
+                <x-slot:title>
+                    TOP Suicide
+                </x-slot>
+            </x-top-block>
+        </div>
+
     </div>
 
 </div>

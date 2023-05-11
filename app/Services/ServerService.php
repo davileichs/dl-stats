@@ -285,6 +285,25 @@ class ServerService {
         return $topInfector;
     }
 
+    public function topInSuicidePlayers()
+    {
+        $topSuicide = Cache::remember('topSuicide', $this->cacheExpire, function() {
+            return self::$server->suicides()->select([
+                'Players.playerId',
+                'Players.lastName',
+                \DB::raw('count(id) as suicides')
+            ])
+            ->join('Players', 'Players.playerId', 'Events_Suicides.playerId')
+            ->groupBy('Players.playerId')
+            ->where('Players.hideranking', 0)
+            ->where('eventTime', '>=', Carbon::now()->subMonth())
+            ->groupBy(['Players.playerId'])
+            ->orderBy('suicides', 'desc')
+        ->limit(10)->get();
+        });
+        return $topSuicide;
+    }
+
     public static function mapUsage(?string $date = null): array
     {
         return MapService::mapUsage(self::$server, $date);

@@ -27,7 +27,8 @@ class TopPlayers extends Component
             'topSoloPlayers'            => $this->readyToLoad ? ServerService::find($this->server)->topSoloPlayers() : [],
             'topZombieDamagePlayers'    => $this->readyToLoad ? ServerService::find($this->server)->topZombieDamagePlayers() : [],
             'topMotherZombiePlayers'    => $this->readyToLoad ? ServerService::find($this->server)->topMotherZombiePlayers() : [],
-            'topInfectorPlayers'        => $this->readyToLoad ? ServerService::find($this->server)->topInfectorPlayers() : []
+            'topInfectorPlayers'        => $this->readyToLoad ? ServerService::find($this->server)->topInfectorPlayers() : [],
+            'topInSuicidePlayers'       => $this->readyToLoad ? ServerService::find($this->server)->topInSuicidePlayers() : []
         ]);
     }
 }

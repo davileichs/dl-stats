@@ -48,6 +48,11 @@ class Server extends Model
         return $this->hasManyThrough(Player::class, Game::class, 'code', 'game' , 'game', 'code');
     }
 
+    public function suicides(): HasMany
+    {
+        return $this->hasMany(EventsSuicide::class, 'serverId', 'serverId');
+    }
+
     public function livestats(): hasOne
     {
         return $this->hasOne(Livestats::class, 'server_id', 'serverId');
