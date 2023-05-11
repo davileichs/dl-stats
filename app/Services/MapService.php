@@ -53,9 +53,18 @@ class MapService {
 
     public static function list(?string $search = null)
     {
-        $maps = EventsEntry::select(['map', \DB::raw('count(id) as popularity')])
-                ->where('serverId', self::$server->serverId)
-                ->whereDate('eventTime', '>', Carbon::now()->subMonth()->toDateTime());
+        $maps = EventsEntry::select([
+            'map',
+            \DB::raw('(
+                SELECT
+                count(id)
+                FROM hlstats_Events_Entries hee
+                where hee.map = hlstats_Events_Entries.map
+                and time(hee.eventTime) > "12:00:00"
+                group by map)
+            as popularity')])
+            ->where('serverId', self::$server->serverId)
+            ->whereDate('eventTime', '>', Carbon::now()->subMonth()->toDateTime());
 
         if ($search) {
             $maps = $maps->search('map', $search);
@@ -105,51 +114,7 @@ class MapService {
         return ServerService::find($map->servers()->first());
     }
 
-    public static function MapHits(): ?PlayerMapHits
-    {
-        $map = self::get();
-        return $map->MapsHits()
-            ->select([
-                'Map',
-                \DB::raw('SUM(hits) as hits'),
-                \DB::raw('SUM(damage) as damage'),
-                \DB::raw('SUM(shots) as shots'),
-                \DB::raw('round(SUM(hits) / SUM(shots)*100) as accuracy'),
-            ])
-            ->groupBy(['Map'])
-            ->first();
-    }
-
-    public static function MapShots(): array
-    {
-        $map = self::$map;
-
-        $shots = $map->MapShots()
-            ->select([
-                'Map',
-                \DB::raw('SUM(head) as head'),
-                \DB::raw('SUM(chest) as chest'),
-                \DB::raw('SUM(stomach) as stomach'),
-                \DB::raw('SUM(leftarm) as leftarm'),
-                \DB::raw('SUM(rightarm) as rightarm'),
-                \DB::raw('SUM(leftleg) as leftleg'),
-                \DB::raw('SUM(rightleg) as rightleg'),
-            ])
-            ->groupBy(['Map'])
-            ->first();
-
-            return array(
-                'head'      => $shots['head'] ?? 0,
-                'rightarm'  => $shots['rightarm'] ?? 0,
-                'chest'     => $shots['chest'] ?? 0,
-                'rightleg'  => $shots['rightleg'] ?? 0,
-                'leftleg'   => $shots['leftleg'] ?? 0,
-                'stomach'   => $shots['stomach'] ?? 0,
-                'leftarm'   => $shots['leftarm'] ?? 0,
-            );
-    }
-
-    public static function topPlayers(?int $top = 10): Collection
+    public static function topShootPlayers(int $top = 10): Collection
     {
         $map = self::$map;
 
@@ -169,9 +134,31 @@ class MapService {
             ->where('Players.hideRanking', '0')
             ->where('Players.skill', '>', '1000')
             ->groupBy(['Map', 'Players.playerId'])
-            ->orderBy('accuracy', 'desc')
+            ->orderBy('damage', 'desc')
             ->limit($top)
             ->get();
+    }
+
+    public static function topPlayers(int $top = 10): Collection
+    {
+        $rows = self::$map->playerActions()
+        ->select([
+            'Players.playerId',
+            'Players.lastName as nickname',
+            \DB::raw('SUM(reward_player) as points')
+        ])
+        ->join('Actions', 'Events_PlayerActions.actionId', 'Actions.id')
+        ->join('Players', 'Players.playerId', 'Events_PlayerActions.playerId')
+        ->groupBy('Players.playerId')
+        ->where('Players.hideranking', 0)
+        ->where('Players.game', self::get()->game)
+        ->where('eventTime', '>=', Carbon::now()->subMonth())
+        ->groupBy(['Players.playerId'])
+        ->orderBy('points', 'desc')
+        ->limit($top)
+        ->get();
+
+        return $rows;
     }
 
 

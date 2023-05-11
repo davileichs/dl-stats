@@ -9,27 +9,22 @@
                 <div class="col-md-6">
                     <x-card>
                         <x-slot:title>
-                            Today Score Sessions
+                            Top Players
                         </x-slot>
                             <x-table search="hide">
                                 <x-slot:thead>
                                     <th>Rank</th>
                                     <th>Player</th>
-                                    <th>Shots</th>
-                                    <th>Hits</th>
-                                    <th>Damage</th>
+                                    <th>Points Earned</th>
                                 </x-slot>
                                 <x-slot:tbody>
-                                    @foreach ($map->mapUsage() as $time=>$items)
-                                        @foreach($items['players'] as $k=>$player)
-                                            <tr>
-                                                <td>{{ $k+1 }}</td>
-                                                <td><a href="{{ route('player.show', $player->playerId ) }}" class="link-secondary">{{ $player->nickname }}</a></td>
-                                                <td>{{ number_format($player->shots) }}</td>
-                                                <td>{{ number_format($player->hits) }}</td>
-                                                <td>{{ number_format($player->damage) }}</td>
-                                            </tr>
-                                        @endforeach
+                                    @php $i=0; @endphp
+                                    @foreach ($map->topPlayers(20) as $k=>$player)
+                                        <tr>
+                                            <td>{{ ++$i }}</td>
+                                            <td><a href="{{ route('player.show', $player->playerId ) }}" class="link-secondary">{{ $player->nickname }}</a></td>
+                                            <th>{{ $player->points }}</th>
+                                        </tr>
                                     @endforeach
                                 </x-slot>
                                 <x-slot:pagination>
@@ -41,7 +36,7 @@
                 <div class="col-md-6">
                     <x-card>
                             <x-slot:title>
-                                Top Players
+                                Top Shooters
                             </x-slot>
                                 <x-table search="hide">
                                     <x-slot:thead>
@@ -53,7 +48,7 @@
                                         <th>Accuracy</th>
                                     </x-slot>
                                     <x-slot:tbody>
-                                        @foreach ($map->topPlayers(20) as $k=>$player)
+                                        @foreach ($map->topShootPlayers(20) as $k=>$player)
                                         <tr>
                                             <td>{{ $k+1 }}</td>
                                             <td><a href="{{ route('player.show', $player->playerId ) }}" class="link-secondary">{{ $player->nickname }}</a></td>
@@ -105,7 +100,7 @@
             data: {
                     labels: shotsLabel,
                     datasets: [{
-                        label: "Play Time last Month",
+                        label: "Popularity last Month",
                         data: shotsData,
                         fill: true,
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',

@@ -25,11 +25,6 @@ class Map extends Model
         $this->connection = config('database.active_stats');
     }
 
-    public function sessions(): HasMany
-    {
-        return $this->hasMany(PlayerName::class, 'playerId', 'playerId');
-    }
-
     public function games(): BelongsTo
     {
         return $this->belongsTo(Game::class, 'game', 'code');
